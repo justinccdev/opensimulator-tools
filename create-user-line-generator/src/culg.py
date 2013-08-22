@@ -2,15 +2,15 @@
 
 from sys import argv
 
-if len(argv) != 4:
-  print "Usage: %s <first-name> <last-name-stub> <no-of-bots>" % argv[0]
+if len(argv) != 5:
+  print "Usage: %s <first-name> <last-name-stub> <password> <no-of-bots>" % argv[0]
   exit(-1)
 
 firstName = argv[1]
 lastNameStub = argv[2]
-botCount = int(argv[3])
+password = argv[3]
+botCount = int(argv[4])
 
-password = "changeme"
 email = "none@none.com"
 idStub = "b0b0b0b0-0000-0000-0000-000000000"
 
