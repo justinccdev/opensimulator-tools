@@ -1,8 +1,18 @@
 #!/usr/bin/python
 
+from sys import argv
+
+if len(argv) != 4:
+  print "Usage: %s <first-name> <last-name-stub> <no-of-bots>" % argv[0]
+  exit(-1)
+
+firstName = argv[1]
+lastNameStub = argv[2]
+botCount = int(argv[3])
+
 password = "changeme"
 email = "none@none.com"
 idStub = "b0b0b0b0-0000-0000-0000-000000000"
 
-for i in range(220):
-  print "create user ima bot_%s %s %s %s%03i" % (i, password, email, idStub, i)
+for i in range(botCount):
+  print "create user %s %s_%s %s %s %s%03i" % (firstName, lastNameStub, i, password, email, idStub, i)
