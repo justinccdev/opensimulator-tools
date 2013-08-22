@@ -12,4 +12,4 @@ password = argv[3]
 botCount = int(argv[4])
 
 for i in range(botCount):
-  print "reset user %s %s_%s %s" % (firstName, lastNameStub, i, password)
+  print "reset user password %s %s_%s %s" % (firstName, lastNameStub, i, password)
