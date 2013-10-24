@@ -62,6 +62,8 @@ class OrderedSet(collections.MutableSet):
             return len(self) == len(other) and list(self) == list(other)
         return set(self) == set(other)
 
+okayToMissUuids = { "5748decc-f629-461c-9a36-a35a221fe21f" : "Blank Texture" }
+
 tree = ET.parse("retro trailer.xml")
 root = tree.getroot()
 
@@ -84,4 +86,8 @@ if len(missingUuids) > 0:
   print "Missing UUIDs:"
 
 for uuid in missingUuids:
-  print uuid
+  print uuid,
+  if uuid in okayToMissUuids:
+    print " (%s)" % (okayToMissUuids[uuid])
+  else:
+    print
