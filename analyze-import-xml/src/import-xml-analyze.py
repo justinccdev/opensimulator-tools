@@ -82,9 +82,10 @@ for uuid in root.findall('.//uuid'):
 uuids = sorted(uuids)
 
 missingUuids = OrderedSet()
+xmlDirname = os.path.dirname(xmlPath)
 
 for uuid in uuids:
-  if not os.path.exists(uuid):
+  if not os.path.exists(os.path.join(xmlDirname, uuid)):
     missingUuids.add(uuid)
 
 print "Missing %s textures from %s referenced" % (len(missingUuids), len(uuids))
