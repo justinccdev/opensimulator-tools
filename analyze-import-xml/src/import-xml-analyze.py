@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
-import xml.etree.ElementTree as ET
 import collections
+import os
+import xml.etree.ElementTree as ET
 
 class OrderedSet(collections.MutableSet):
 
@@ -71,7 +72,16 @@ for uuid in root.findall('.//uuid'):
 
 uuids = sorted(uuids)
 
-print "Unique uuids:"
+missingUuids = OrderedSet()
 
 for uuid in uuids:
+  if not os.path.exists(uuid):
+    missingUuids.add(uuid)
+
+print "Missing %s textures from %s referenced" % (len(missingUuids), len(uuids))
+
+if len(missingUuids) > 0:
+  print "Missing UUIDs:"
+
+for uuid in missingUuids:
   print uuid
