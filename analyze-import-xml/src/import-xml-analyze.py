@@ -2,6 +2,7 @@
 
 import collections
 import os
+import sys
 import xml.etree.ElementTree as ET
 
 class OrderedSet(collections.MutableSet):
@@ -64,7 +65,13 @@ class OrderedSet(collections.MutableSet):
 
 okayToMissUuids = { "5748decc-f629-461c-9a36-a35a221fe21f" : "Blank Texture" }
 
-tree = ET.parse("retro trailer.xml")
+if len(sys.argv) <= 1:
+  print "Usage: %s <path-to-xml>" % sys.argv[0]
+  sys.exit(-1)
+
+xmlPath = sys.argv[1]
+
+tree = ET.parse(xmlPath)
 root = tree.getroot()
 
 uuids = OrderedSet()
