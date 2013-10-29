@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-HOST_NAME = "0.0.0.0"
-PORT_NUMBER = 9000
-
 import BaseHTTPServer
 import time
+
+HOST_NAME = "0.0.0.0"
+PORT_NUMBER = 9000
 
 class MyHandler(BaseHTTPServer.BaseHTTPRequestHandler):
   def do_HEAD(s):
