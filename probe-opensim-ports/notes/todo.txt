@@ -1,4 +1,4 @@
 todo
 
-also need a program to listen and respond!
+read http address out of ini files
 http probe port 9000
