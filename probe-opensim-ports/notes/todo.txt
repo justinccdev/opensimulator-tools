@@ -1,4 +1,6 @@
 todo
 
 read http address out of ini files
+  create common ini file parsing code
+  pythons ConfigParser throws up if a line doesn't stricly begin with ;
 http probe port 9000
