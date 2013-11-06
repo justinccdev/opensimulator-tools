@@ -1,276 +1,266 @@
 #! /bin/sh
- ### BEGIN INIT INFO
- # Provides:          OpenSimulator
- # Required-Start:    $local_fs $network 
- # Required-Stop:     $local_fs
- # Default-Start:     2 3 4 5
- # Default-Stop:      0 1 6
- # Short-Description: Tedds OpenSimulator init.d-script
- ### END INIT INFO
+### BEGIN INIT INFO
+# Provides:          OpenSimulator
+# Required-Start:    $local_fs $network 
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Tedds OpenSimulator init.d-script, with further changes by Justin Clark-Casey (http://justincc.org)
+### END INIT INFO
  
- # Put script in /etc/init.d/
- # then execute: update-rc.d opensim defaults
+# Put script in /etc/init.d/
+# Then execute /etc/init.d/opensim <start>|<stop>|<restart>|<status>
+#
+# You must configure Robust and OpenSim to create Robust.exe.pid and OpenSim.exe.pid PID files
+# by configuring PIDFile in the [Startup] section of OpenSim.ini and Robust.ini
  
- set -e
+set -e
  
- #
- # Directories
- #
- # Location of OpenSimulator installation
- DIR=/home/opensim/OpenSim/bin/
- # Different PID dir?
- PIDDIR=$DIR
+# Location of OpenSimulator binaries
+DIR=/opt/opensim/bin
+
+# The directory where OpenSimulator and Robust are placing their pid files.  These must be of the form <service-name>.pid
+# e.g. OpenSim.exe.pid
+PIDDIR=/tmp/
  
- USER=opensim
- SERVICES="Robust.exe OpenSim.exe"
+# The user name which will execute the services
+USER=opensim
+
+SERVICES="Robust.exe OpenSim.exe"
  
- #
- # Kill values (in seconds)
- #
- # How long between each service being started
- DELAY_STARTUP=10
- # How long between each service is sent shutdown command
- DELAY_KILL=10
- # After shutdown has been sent to all we do another loop with "kill", then "kill -9". How long between "kill" and "kill -9".
- DELAY_FORCEKILL=10
+#
+# Kill values (in seconds)
+#
+# How long between each service being started
+DELAY_STARTUP=10
+# How long between each service is sent shutdown command
+DELAY_KILL=10
+# After shutdown has been sent to all we do another loop with "kill", then "kill -9". How long between "kill" and "kill -9".
+DELAY_FORCEKILL=10
+
+#
+# Info on service handled by this script
  
- #
- # Info on service handled by this script
+# Name of service
+NAME=opensim
+# Description of service
+DESC="OpenSimulator Server"
  
- # Name of service
- NAME=opensim
- # Description of service
- DESC="OpenSimulator Server"
+# Binaries
+SCREEN=/usr/bin/screen
+MONO=/usr/bin/mono
  
- # Binaries
- SCREEN=/usr/bin/screen
- MONO=/usr/bin/mono
+###########################
+##### START OF SCRIPT #####
+###########################
  
- ###########################
- ##### START OF SCRIPT #####
- ###########################
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
  
- export PATH="${PATH:+$PATH:}/usr/sbin:/sbin"
+# Load LSB log functions
+_lsbFile=""
+if [ -e /etc/debian_version ]; then
+    _lsbFile="/lib/lsb/init-functions"
+    if [ -f $_lsbFile ]; then
+        . $_lsbFile
+    else
+        echo "This script requires LSB init-functions file which does not exist: $_lsbFile"
+        exit 1
+    fi
+else
+# [ -e /etc/init.d/functions ] ; then
+    _lsbFile="/etc/init.d/functions"
+    if [ -e $_lsbFile ]; then
+        . $_lsbFile
+    else
+        echo "This script requires LSB init-functions file which does not exist: $_lsbFile"
+        exit 1
+    fi
+fi
  
-  
+# Lets use fancy output
+log_use_fancy_output
  
- # Load LSB log functions
- _lsbFile=""
- if [ -e /etc/debian_version ]; then
-     _lsbFile="/lib/lsb/init-functions"
-     if [ -f $_lsbFile ]; then
-         . $_lsbFile
-     else
-         echo "This script requires LSB init-functions file which does not exist: $_lsbFile"
-         exit 1
-     fi
- else
- # [ -e /etc/init.d/functions ] ; then
-     _lsbFile="/etc/init.d/functions"
-     if [ -e $_lsbFile ]; then
-         . $_lsbFile
-     else
-         echo "This script requires LSB init-functions file which does not exist: $_lsbFile"
-         exit 1
-     fi
- fi
+# Check that target directory exists
+if test ! -d "$DIR"; then
+    log_failure_msg "$NAME" "Target directory \"$DIR\" does not exist. Can not continue."
+    exit 1
+fi
  
- # Lets use fancy output
- log_use_fancy_output
+# Create a reverse order for shutdown
+SERVICES_REVERSE=""
+reverse() { SERVICES_REVERSE="$9 $8 $7 $6 $5 $4 $3 $2 $1"; }
+reverse $SERVICES
  
- # Check that target directory exists
- if test ! -d "$DIR"; then
-     log_failure_msg "$NAME" "Target directory \"$DIR\" does not exist. Can not continue."
-     exit 1
- fi
+# Check if a service is running
+isrunning() { 
+    ISRUNNING="0"
+    # Do we have PID-file?
+    if [ -f "$PIDDIR/$1.pid" ]; then
+        # Check if proc is running
+        pid=`cat "$PIDDIR/$1.pid" 2> /dev/null`
+        if [ "$pid" != "" ]; then
+            if [ -d /proc/$pid ]; then
+                # Process is running
+                ISRUNNING="1"
+            fi
+        fi
+    fi
+    #ISRUNNING="0"
+}
  
- # Create a reverse order for shutdown
- SERVICES_REVERSE=""
- reverse() { SERVICES_REVERSE="$9 $8 $7 $6 $5 $4 $3 $2 $1"; }
- reverse $SERVICES
+#
+# Process commands
+#
+case "$1" in
+start)
+    # Start all services one by one
+    for server in $SERVICES; do
+        log_daemon_msg "Starting $NAME" "$server"
+
+        isrunning $server
+        case "$ISRUNNING" in
+            1) log_progress_msg "Process already started. Please stop first"; log_end_msg 1 ;;
+            0) 
+                # Process is not running
+                # Start process and sleep...
+                exefile="/tmp/exe.OpenSim.$server.sh"
+
+                # Need to make external file, had big problems with screen params
+                echo \#\!/bin/bash > $exefile
+                echo cd $DIR >> $exefile
+                echo $MONO $server >> $exefile
+                chmod +x $exefile
+
+                cmd_screen="-S $server -d -m $exefile"
+                start-stop-daemon --start --pidfile $server.pid -u $USER --chdir $DIR --chuid $USER -x /usr/bin/screen -- $cmd_screen
+
+                # Delay between services that are started
+                sleep $DELAY_STARTUP
+
+                rm $exefile 2> /dev/null
  
- # Check if a service is running
- isrunning() { 
-     ISRUNNING="0"
-     # Do we have PID-file?
-     if [ -f "$PIDDIR/$1.pid" ]; then
-         # Check if proc is running
-         pid=`cat "$PIDDIR/$1.pid" 2> /dev/null`
-         if [ "$pid" != "" ]; then
-             if [ -d /proc/$pid ]; then
-                 # Process is running
-                 ISRUNNING="1"
-             fi
-         fi
-     fi
-     #ISRUNNING="0"
- }
+                isrunning $server
+                case "$ISRUNNING" in
+                    1) 
+                        # Process started ok
+                        #log_progress_msg "Success"; 
+                        log_end_msg 0 
+                        ;;
+                    0) 
+                        #log_progress_msg "Failure"; 
+                        log_end_msg 1 
+                        ;;
+                esac
+                ;;
+        esac
+    done
+    ;;
  
- #
- # Process commands
- #
- case "$1" in
- start)
-     # Start all services one by one
-     for server in $SERVICES; do
-         log_daemon_msg "Starting $NAME" "$server"
- 
-         isrunning $server
-         case "$ISRUNNING" in
-             1) log_progress_msg "Process already started. Please stop first"; log_end_msg 1 ;;
-             0) 
-                 # Process is not running
-                 # Start process and sleep...
-                 exefile="/tmp/exe.OpenSim.$server.sh"
- 
-                 # Need to make external file, had big problems with screen params
-                 echo \#\!/bin/bash > $exefile
-                 echo cd $DIR >> $exefile
-                 echo $MONO $server >> $exefile
-                 chmod +x $exefile
- 
-                 cmd_screen="screen -S $server -d -m $exefile"
-                 start-stop-daemon --start -b -x /bin/su -m --pidfile=/tmp/su.$server.pid --chdir "$DIR" -- - $USER "-c $cmd_screen"
- 
-                 # Delay between services that are started
-                 sleep $DELAY_STARTUP
- 
-                 rm $exefile 2> /dev/null
- 
-                 # Make PID-file
-                 ps afxu | grep "mono $server" | grep -iEv "grep|screen" | awk {'print $2'} > "$PIDDIR/$server.pid"
- 
-                 isrunning $server
-                 case "$ISRUNNING" in
-                     1) 
-                         # Process started ok
-                         #log_progress_msg "Success"; 
-                         log_end_msg 0 
-                         ;;
-                     0) 
-                         # Process did not start... remove pid-file
-                         rm "$PIDDIR/$server.pid" 2> /dev/null
-                         #log_progress_msg "Failure"; 
-                         log_end_msg 1 
-                         ;;
-                 esac
-                 ;;
-         esac
- 
-     done
-     ;;
- 
-  
- 
- stop)
-     _killCount=0
- 
-     for server in $SERVICES_REVERSE; do
-         log_daemon_msg "Stopping $NAME" "$server"
- 
-         isrunning $server
-         case "$ISRUNNING" in
-         1) 
-             _killCount=`expr $_killCount + 1`
-             log_progress_msg "Sending shutdown command:"; 
- 
-             # We add some backspaces to the command in case something is on the console already
-             echo "screen -S $server -X stuff"                             
- 
-             # Wait for it to shut down...
-             sleep $DELAY_KILL
- 
-             isrunning $server
-             case "$ISRUNNING" in
-                 1) log_progress_msg "is still running."; log_end_msg 0 ;;
-                 0) log_progress_msg "has been shutdown"; log_end_msg 0 ;;
-             esac
- 
-             ;;
-         0) 
-             log_progress_msg "is not running"; log_end_msg 0
-             ;;
-         esac
- 
-     done
- 
-     # Check if any procs are still running
-     for server in $SERVICES; do
-         isrunning $server
-         case "$ISRUNNING" in
-         1) 
-             log_warning_msg "Stopping $NAME" "$server is still running: Forcing kill"
-             echo `kill $pid 2> /dev/null`;
-             sleep $DELAY_FORCEKILL
-             echo `kill -9 $pid 2> /dev/null`;
-             sleep 1
- 
-             # Now check again if it is still running...
-             isrunning $server
-             case "$ISRUNNING" in
-                 0) log_progress_msg "Success"; log_end_msg 0 ;;
-                 1) log_progress_msg "Process is still running... Even after \"kill -9 $pid\". WOW..."; log_end_msg 0 ;;
-             esac
-             ;;
-         0) 
-             #log_progress_msg ""; 
-             ;;
-         esac
-     done
- 
-     log_begin_msg "$NAME: All done (killed $_killCount procs)"; log_end_msg 0
- 
-     ;;
- 
-  
- 
-  
- 
- status)
-     # Count how many processes we need
-     PROCCOUNT=0
-     for i in $SERVICES; do
-         PROCCOUNT=`expr $PROCCOUNT + 1`
-     done
- 
-     # Go through server PID files and count how many are running
-     log_begin_msg "$NAME: Running processed:"
-     _pidCount=0
-     for server in $SERVICES; do
- 
-         isrunning $server
-         case "$ISRUNNING" in
-             1) 
-                 # This server is running
-                 _pidCount=`expr $_pidCount + 1`
-                 log_progress_msg "$server"
-                 ;;
-             0) 
-                 ;;
-         esac
-     done
- 
-     log_begin_msg " ($_pidCount of $PROCCOUNT processes are running)"; log_end_msg 0
- 
-     # Check if running proc count matches requires proc count
-     log_begin_msg "$NAME is"
-     if [ $_pidCount -eq $PROCCOUNT ]; then
-         log_progress_msg "running"; log_end_msg 0
-         exit 0
-     else
-         log_progress_msg "NOT running"; log_end_msg 0
-         exit 1
-     fi
-     ;;
- 
- restart)
-     $0 stop
-     $0 start
-     ;;
- *)
-     echo "Usage: /etc/init.d/$NAME {start|stop|restart|status}" >&2
-     exit 1
-     ;;
- esac
- 
- exit 0
+stop)
+    _killCount=0
+
+    for server in $SERVICES_REVERSE; do
+        log_daemon_msg "Stopping $NAME" "$server"
+
+        isrunning $server
+        case "$ISRUNNING" in
+        1) 
+            _killCount=`expr $_killCount + 1`
+            log_progress_msg "Sending shutdown command:"; 
+
+            # We add some backspaces to the command in case something is on the console already
+            echo "screen -S $server -X stuff"                             
+
+            # Wait for it to shut down...
+            sleep $DELAY_KILL
+
+            isrunning $server
+            case "$ISRUNNING" in
+                1) log_progress_msg "is still running."; log_end_msg 0 ;;
+                0) log_progress_msg "has been shutdown"; log_end_msg 0 ;;
+            esac
+
+            ;;
+        0) 
+            log_progress_msg "is not running"; log_end_msg 0
+            ;;
+        esac
+
+    done
+
+    # Check if any procs are still running
+    for server in $SERVICES; do
+        isrunning $server
+        case "$ISRUNNING" in
+        1) 
+            log_warning_msg "Stopping $NAME" "$server is still running: Forcing kill"
+            echo `kill $pid 2> /dev/null`;
+            sleep $DELAY_FORCEKILL
+            echo `kill -9 $pid 2> /dev/null`;
+            sleep 1
+
+            # Now check again if it is still running...
+            isrunning $server
+            case "$ISRUNNING" in
+                0) log_progress_msg "Success"; log_end_msg 0 ;;
+                1) log_progress_msg "Process is still running... Even after \"kill -9 $pid\". WOW..."; log_end_msg 0 ;;
+            esac
+            ;;
+        0) 
+            #log_progress_msg ""; 
+            ;;
+        esac
+    done
+
+    log_begin_msg "$NAME: All done (killed $_killCount procs)"; log_end_msg 0
+
+    ;;
+
+status)
+    # Count how many processes we need
+    PROCCOUNT=0
+    for i in $SERVICES; do
+        PROCCOUNT=`expr $PROCCOUNT + 1`
+    done
+
+    # Go through server PID files and count how many are running
+    log_begin_msg "$NAME: Running processed:"
+    _pidCount=0
+    for server in $SERVICES; do
+
+        isrunning $server
+        case "$ISRUNNING" in
+            1) 
+                # This server is running
+                _pidCount=`expr $_pidCount + 1`
+                log_progress_msg "$server"
+                ;;
+            0) 
+                ;;
+        esac
+    done
+
+    log_begin_msg " ($_pidCount of $PROCCOUNT processes are running)"; log_end_msg 0
+
+    # Check if running proc count matches requires proc count
+    log_begin_msg "$NAME is"
+    if [ $_pidCount -eq $PROCCOUNT ]; then
+        log_progress_msg "running"; log_end_msg 0
+        exit 0
+    else
+        log_progress_msg "NOT running"; log_end_msg 0
+        exit 1
+    fi
+    ;;
+
+restart)
+    $0 stop
+    $0 start
+    ;;
+*)
+    echo "Usage: /etc/init.d/$NAME {start|stop|restart|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0
