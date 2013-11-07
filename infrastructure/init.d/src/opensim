@@ -171,7 +171,7 @@ stop)
             _killCount=`expr $_killCount + 1`
             log_daemon_msg "Sending shutdown command:"; 
 
-            cmd_screen="$SCREEN -S $server -p 0 -X stuff quit"
+            cmd_screen="$SCREEN -S $server -p 0 -X stuff quit$(printf \\r)"
 
             # We can't use start-stop-daemon here currently because it will only send a signal to OpenSim
             # --stop doesn't execute a command
