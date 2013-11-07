@@ -132,7 +132,7 @@ start)
                 chmod +x $exefile
 
                 cmd_screen="-S $server -d -m $exefile"
-                start-stop-daemon --start --pidfile $server.pid -u $USER --chdir $DIR --chuid $USER -x /usr/bin/screen -- $cmd_screen
+                start-stop-daemon --start --pidfile $PIDDIR/$server.pid -u $USER --chdir $DIR --chuid $USER -x /usr/bin/screen -- $cmd_screen
 
                 # Delay between services that are started
                 sleep $DELAY_STARTUP
@@ -168,8 +168,8 @@ stop)
             _killCount=`expr $_killCount + 1`
             log_progress_msg "Sending shutdown command:"; 
 
-            # We add some backspaces to the command in case something is on the console already
-            echo "screen -S $server -X stuff"                             
+            cmd_screen="$SCREEN -S $server -X quit"
+            start-stop-daemon --stop --pidfile $PIDDIR/$server.pid -u $USER --chuid $USER -- $cmd_screen
 
             # Wait for it to shut down...
             sleep $DELAY_KILL
