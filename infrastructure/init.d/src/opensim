@@ -8,7 +8,7 @@
 # Short-Description: Tedds OpenSimulator init.d-script, with further changes by Justin Clark-Casey (http://justincc.org)
 ### END INIT INFO
 
-# Version 0.2
+# Version 0.2.1
 # Put script in /etc/init.d/
 # Then execute /etc/init.d/opensim <start>|<stop>|<restart>|<status>
 #
@@ -131,7 +131,7 @@ start)
                 # Need to make external file, had big problems with screen params
                 echo \#\!/bin/bash > $exefile
                 echo cd $DIR >> $exefile
-                echo $MONO $server >> $exefile
+                echo $MONO --debug $server >> $exefile
                 chmod +x $exefile
 
                 cmd_screen="-S $server -d -m $exefile"
@@ -220,7 +220,7 @@ stop)
         esac
     done
 
-    log_daemon_msg "$NAME: All done (killed $_killCount procs)"; log_end_msg 0
+    log_daemon_msg "$NAME: All done (stopped $_killCount processes)"; log_end_msg 0
 
     ;;
 
