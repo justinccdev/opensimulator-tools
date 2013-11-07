@@ -34,7 +34,7 @@ SERVICES="Robust.exe OpenSim.exe"
 # How long between each service being started
 DELAY_STARTUP=10
 # How long between each service is sent shutdown command
-DELAY_KILL=10
+DELAY_KILL=20
 # After shutdown has been sent to all we do another loop with "kill", then "kill -9". How long between "kill" and "kill -9".
 DELAY_FORCEKILL=10
 
