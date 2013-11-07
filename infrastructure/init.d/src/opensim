@@ -119,7 +119,7 @@ start)
 
         isrunning $server
         case "$ISRUNNING" in
-            1) log_progress_msg "Process already started. Please stop first"; log_end_msg 1 ;;
+            1) log_daemon_msg "Process already started. Please stop first"; log_end_msg 1 ;;
             0) 
                 # Process is not running
                 # Start process and sleep...
@@ -143,11 +143,11 @@ start)
                 case "$ISRUNNING" in
                     1) 
                         # Process started ok
-                        #log_progress_msg "Success"; 
+                        #log_daemon_msg "Success"; 
                         log_end_msg 0 
                         ;;
                     0) 
-                        #log_progress_msg "Failure"; 
+                        #log_daemon_msg "Failure"; 
                         log_end_msg 1 
                         ;;
                 esac
@@ -166,7 +166,7 @@ stop)
         case "$ISRUNNING" in
         1) 
             _killCount=`expr $_killCount + 1`
-            log_progress_msg "Sending shutdown command:"; 
+            log_daemon_msg "Sending shutdown command:"; 
 
             cmd_screen="$SCREEN -S $server -X quit"
             start-stop-daemon --stop --pidfile $PIDDIR/$server.pid -u $USER --chuid $USER -- $cmd_screen
@@ -176,13 +176,13 @@ stop)
 
             isrunning $server
             case "$ISRUNNING" in
-                1) log_progress_msg "is still running."; log_end_msg 0 ;;
-                0) log_progress_msg "has been shutdown"; log_end_msg 0 ;;
+                1) log_daemon_msg "$server is still running."; log_end_msg 0 ;;
+                0) log_daemon_msg "$server has been shutdown"; log_end_msg 0 ;;
             esac
 
             ;;
         0) 
-            log_progress_msg "is not running"; log_end_msg 0
+            log_daemon_msg "$server is not running"; log_end_msg 0
             ;;
         esac
 
@@ -202,17 +202,17 @@ stop)
             # Now check again if it is still running...
             isrunning $server
             case "$ISRUNNING" in
-                0) log_progress_msg "Success"; log_end_msg 0 ;;
-                1) log_progress_msg "Process is still running... Even after \"kill -9 $pid\". WOW..."; log_end_msg 0 ;;
+                0) log_daemon_msg "Success"; log_end_msg 0 ;;
+                1) log_daemon_msg "Process is still running... Even after \"kill -9 $pid\". WOW..."; log_end_msg 0 ;;
             esac
             ;;
         0) 
-            #log_progress_msg ""; 
+            #log_daemon_msg ""; 
             ;;
         esac
     done
 
-    log_begin_msg "$NAME: All done (killed $_killCount procs)"; log_end_msg 0
+    log_daemon_msg "$NAME: All done (killed $_killCount procs)"; log_end_msg 0
 
     ;;
 
@@ -224,7 +224,7 @@ status)
     done
 
     # Go through server PID files and count how many are running
-    log_begin_msg "$NAME: Running processed:"
+    log_daemon_msg "$NAME: Running processes:"
     _pidCount=0
     for server in $SERVICES; do
 
@@ -233,22 +233,21 @@ status)
             1) 
                 # This server is running
                 _pidCount=`expr $_pidCount + 1`
-                log_progress_msg "$server"
+                log_daemon_msg "$server"
                 ;;
             0) 
                 ;;
         esac
     done
 
-    log_begin_msg " ($_pidCount of $PROCCOUNT processes are running)"; log_end_msg 0
+    log_daemon_msg " ($_pidCount of $PROCCOUNT processes are running)"
 
     # Check if running proc count matches requires proc count
-    log_begin_msg "$NAME is"
     if [ $_pidCount -eq $PROCCOUNT ]; then
-        log_progress_msg "running"; log_end_msg 0
+        log_daemon_msg "$NAME is running"
         exit 0
     else
-        log_progress_msg "NOT running"; log_end_msg 0
+        log_daemon_msg "$NAME is NOT running"
         exit 1
     fi
     ;;
