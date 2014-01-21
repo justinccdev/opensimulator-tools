@@ -1,23 +1,23 @@
-=Introduction=
+# Introduction #
 
 A bunch of miscellaneous tools that may (or may not) grow over time.
 
 Patches for all these tools are welcome!  Please make a Github pull request for these.
 
-=Categories=
+# Categories #
 
-==analysis==
+## analysis ##
 
 Tools for analysing OpenSimulator or related data files and for extracting relevant system information.
 
-= commands =
+## commands ##
 
 Tools for generating command strings to paste in or send to the OpenSimulator console
 
-= infrastucture =
+## infrastucture ##
 
 Tools for managing OpenSimulator instances
 
-= test =
+## test ##
 
 Ignore for now as there are no complete tools.  Future category for tools to test an OpenSimulator installation.
