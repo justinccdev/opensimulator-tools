@@ -62,7 +62,8 @@ for filename in filenames:
   loglinesIter = iter(loglines)
 
   # We must have some timestamp here in case we meet a file which manages to match an RE but with no stamp
-  lastTs = datetime.datetime.min
+  # But must be >= 1900 to stop issues with strftime()
+  lastTs = datetime.datetime(1900, 1, 1)
 
   try:
     while True:
