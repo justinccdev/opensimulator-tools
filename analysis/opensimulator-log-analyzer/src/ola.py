@@ -55,7 +55,9 @@ for filename in filenames:
   loglines = file(filename).readlines();
 
   loglinesIter = iter(loglines)
-  lastTs = None;
+
+  # We must have some timestamp here in case we meet a file which manages to match an RE but with no stamp
+  lastTs = datetime.datetime.min
 
   try:
     while True:
