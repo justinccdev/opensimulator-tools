@@ -38,6 +38,11 @@ def matchTs(logline):
   try:
     if match != None:
       ts = datetime.datetime.strptime(match.group(1), tsFormat)
+      
+      # If timestamp somehow has a year before 1900, put in 1900 to signal the problem so that we don't fail later on with strftime
+      if ts.year < 1900:
+        ts.year = 1900
+
       return ts
   except ValueError:
     pass
