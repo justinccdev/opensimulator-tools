@@ -19,7 +19,7 @@ execCmd("screen -S OpenSim -d -m mono --debug OpenSim.exe");
 
 if (`screen -list` =~ /OpenSim/)
 {
-    print "OpenSim started.\n";
+    print "OpenSim starting in screen instance..\n";
 }
 else
 {
