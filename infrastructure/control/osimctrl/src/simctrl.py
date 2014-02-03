@@ -40,7 +40,7 @@ def getScreenList():
 ### MAIN FUNCTIONS ###
 def startComponent():
   if os.path.exists(pidPath):
-    print >> sys.stderr, "ERROR: %s PID file %s still present.  Assuming OpenSim has been started already.  If not, please delete this file and retry." % (componentName, pidPath)
+    print >> sys.stderr, "ERROR: %s PID file %s still present.  Assuming %s has been started already.  If not, please delete this file and retry." % (componentName, componentName, pidPath)
     sys.exit(1)
   
   # If PID isn't set then we'll check the screen list.  
