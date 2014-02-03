@@ -37,6 +37,10 @@ def getScreenList():
   return execCmd("screen -list")
         
 ### SCRIPT ###
+if len(sys.argv) < 2 or sys.argv[1] != "start":
+  print >> sys.stderr, "Usage: %s start" % sys.argv[0]
+  sys.exit(2)
+  
 if os.path.exists(pidPath):
   print >> sys.stderr, "ERROR: OpenSim PID file %s still present.  Assuming OpenSim has been started already." % pidPath
   sys.exit(1)

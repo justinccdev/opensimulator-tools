@@ -1,6 +1,6 @@
 # README #
 
-A very simple script for starting components of OpenSimulator as a user rather
+A simple couple of scripts for starting components of OpenSimulator as a user rather
 than root.  Incorporates checks to avoid starting a component instance if one
 is already running
 
