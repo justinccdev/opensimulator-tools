@@ -8,12 +8,33 @@ import sys
 ### CONFIGURE THESE PATHS ###
 binaryPath = "/home/opensim/opensim/opensim-current/bin"
 pidPath = "/tmp/OpenSim.pid"
+screenName = "OpenSim"
 ### END OF CONFIG ###
 
 ### FUNCTIONS ###
+def chdir(dir):
+  os.chdir(dir)
+  print "Executing chdir to %s" % dir
+  
 def execCmd(cmd):  
-  print "Executing command: %s" % cmd  
-  return subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+  print "Executing command: %s" % cmd
+  output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+  # print "For output got: %s" % output
+  return output
+
+def findScreen(screenName):
+  screenList = ""
+  
+  try:
+    screenList = getScreenList()
+  except subprocess.CalledProcessError as cpe:
+    screenList = cpe.output
+    
+  #print "screenList: %s" % screenList
+  return re.search("\s+(\d+\.%s)" % screenName, screenList)
+  
+def getScreenList():
+  return execCmd("screen -list")
         
 ### SCRIPT ###
 if os.path.exists(pidPath):
@@ -22,15 +43,17 @@ if os.path.exists(pidPath):
 
 # If PID isn't set then we'll check the screen list.  
 # However, this is a much less perfect mechanism since OpenSimulator may have been started outside screen
-screenList = ""
-
-try:
-  screenList = execCmd("screen -list")
-except:
-  None
-
-if re.match("\s+\d+\.OpenSim", screenList):
+if findScreen(screenName):
   print >> sys.stderr, "ERROR: Screen session for OpenSim already started."
   sys.exit(1)
   
-os.chdir(binaryPath)
+chdir(binaryPath)
+
+execCmd("screen -S OpenSim -d -m mono --debug OpenSim.exe")
+
+screen = findScreen(screenName)
+if screen != None:
+  print "OpenSim starting in screen instance %s" % screen.group(1)
+else:
+  print >> sys.stderr, "ERROR: OpenSim did not start."
+  exit(1)
