@@ -10,6 +10,12 @@ binaryPath = "/home/opensim/opensim/opensim-current/bin"
 pidPath = "/tmp/OpenSim.pid"
 ### END OF CONFIG ###
 
+### FUNCTIONS ###
+def execCmd(cmd):  
+  print "Executing command: %s" % cmd  
+  return subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+        
+### SCRIPT ###
 if os.path.exists(pidPath):
   print >> sys.stderr, "ERROR: OpenSim PID file %s still present.  Assuming OpenSim has been started already." % pidPath
   sys.exit(1)
@@ -19,10 +25,12 @@ if os.path.exists(pidPath):
 screenList = ""
 
 try:
-  screenList = subprocess.check_output("screen -list", shell=True)
+  screenList = execCmd("screen -list")
 except:
   None
 
 if re.match("\s+\d+\.OpenSim", screenList):
   print >> sys.stderr, "ERROR: Screen session for OpenSim already started."
   sys.exit(1)
+  
+os.chdir(binaryPath)
