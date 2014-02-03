@@ -8,7 +8,8 @@ import sys
 ### CONFIGURE THESE PATHS ###
 binaryPath = "/home/opensim/opensim/opensim-current/bin"
 pidPath = "/tmp/OpenSim.pid"
-screenName = "OpenSim"
+componentName = "OpenSim"
+screenName = componentName
 ### END OF CONFIG ###
 
 ### UTILITY FUNCTIONS ###
@@ -39,24 +40,24 @@ def getScreenList():
 ### MAIN FUNCTIONS ###
 def startComponent():
   if os.path.exists(pidPath):
-    print >> sys.stderr, "ERROR: OpenSim PID file %s still present.  Assuming OpenSim has been started already.  If not, please delete this file and retry." % pidPath
+    print >> sys.stderr, "ERROR: %s PID file %s still present.  Assuming OpenSim has been started already.  If not, please delete this file and retry." % (componentName, pidPath)
     sys.exit(1)
   
   # If PID isn't set then we'll check the screen list.  
   # However, this is a much less perfect mechanism since OpenSimulator may have been started outside screen
   if findScreen(screenName):
-    print >> sys.stderr, "ERROR: Screen session for OpenSim already started."
+    print >> sys.stderr, "ERROR: Screen session named %s for %s already started." % (screenName, componentName)
     sys.exit(1)
     
   chdir(binaryPath)
   
-  execCmd("screen -S OpenSim -d -m mono --debug OpenSim.exe")
+  execCmd("screen -S %s -d -m mono --debug %s.exe" % (screenName, componentName))
   
   screen = findScreen(screenName)
   if screen != None:
-    print "OpenSim starting in screen instance %s" % screen.group(1)
+    print "%s starting in screen instance %s" % (componentName, screen.group(1))
   else:
-    print >> sys.stderr, "ERROR: OpenSim did not start."
+    print >> sys.stderr, "ERROR: %s did not start." % componentName
     exit(1)  
   
 ### SCRIPT ###
