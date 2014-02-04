@@ -12,8 +12,8 @@ componentName = "Robust"
 screenName = componentName
 
 ### SCRIPT ###
-if len(sys.argv) < 2 or sys.argv[1] != "start":
-  print >> sys.stderr, "Usage: %s start" % sys.argv[0]
+if len(sys.argv) < 2 or not sys.argv[1] in osc.commands:
+  print >> sys.stderr, "Usage: %s %s" % (sys.argv[0], "|".join(osc.commands))
   sys.exit(2)
 
-osc.startComponent(binaryPath, pidPath, componentName, screenName)
+osc.execCommand(sys.argv[1], binaryPath, pidPath, componentName, screenName)

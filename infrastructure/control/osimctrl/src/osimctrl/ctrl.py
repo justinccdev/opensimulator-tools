@@ -3,10 +3,16 @@ import re
 import subprocess
 import sys
 
+commands = ["start", "status"]
+
 ### UTILITY FUNCTIONS ###
 def chdir(dir):
   os.chdir(dir)
   print "Executing chdir to %s" % dir
+  
+"""Returns true if the pidPath exists.  False otherwise."""
+def checkPid(pidPath):
+  return os.path.exists(pidPath)
   
 def execCmd(cmd):  
   print "Executing command: %s" % cmd
@@ -29,8 +35,43 @@ def getScreenList():
   return execCmd("screen -list")
 
 ### MAIN FUNCTIONS ###
+def execCommand(command, binaryPath, pidPath, componentName, screenName):
+  if command == "status":
+    getComponentStatus(pidPath, componentName, screenName)
+  elif command == "start":
+    startComponent(binaryPath, pidPath, componentName, screenName)
+  else:
+    print "Command %s not recognized" % command        
+      
+def getComponentStatus(pidPath, componentName, screenName):
+  foundPid = checkPid(pidPath)
+  
+  if not foundPid:
+    print "Did not find PID at %s" % pidPath
+  else:
+    print "Found PID at %s" % pidPath
+    
+  # We'll check screen even if we found PID so that we can get screen information        
+  screen = findScreen(screenName)
+    
+  if screen == None:
+    print "Did not find screen named %s" % screenName
+  else:
+    print "Found screen %s" % screen.group(1)      
+    
+  if screen != None:
+    if foundPid:
+      print "Status: Running"
+    else:
+      print "Status: Running (but no PID file found)"
+  else:
+    if foundPid:
+      print "Status: Running (but not in a screen instance)"
+    else:
+      print "Status: Stopped"
+  
 def startComponent(binaryPath, pidPath, componentName, screenName):
-  if os.path.exists(pidPath):
+  if checkPid(pidPath):
     print >> sys.stderr, "ERROR: %s PID file %s still present.  Assuming %s has been started already.  If not, please delete this file and retry." % (componentName, componentName, pidPath)
     sys.exit(1)
   
