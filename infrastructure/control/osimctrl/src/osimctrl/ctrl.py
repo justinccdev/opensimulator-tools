@@ -3,7 +3,7 @@ import re
 import subprocess
 import sys
 
-commands = ["start", "status"]
+commands = ["attach", "start", "status"]
 
 ### UTILITY FUNCTIONS ###
 def chdir(dir):
@@ -36,13 +36,24 @@ def getScreenList():
 
 ### MAIN FUNCTIONS ###
 def execCommand(command, binaryPath, pidPath, componentName, screenName):
-  if command == "status":
+  if command == "attach":
+    attachToComponent(screenName)
+  elif command == "status":
     getComponentStatus(pidPath, componentName, screenName)
   elif command == "start":
     startComponent(binaryPath, pidPath, componentName, screenName)
   else:
     print "Command %s not recognized" % command        
       
+def attachToComponent(screenName):
+  screen = findScreen(screenName)
+  
+  if screen == None:
+    print "Did not find screen named %s for attach" % screenName
+  else:
+    print "Found screen %s" % screen.group(1) 
+    execCmd("screen -x %s" % screenName)
+  
 def getComponentStatus(pidPath, componentName, screenName):
   foundPid = checkPid(pidPath)
   
