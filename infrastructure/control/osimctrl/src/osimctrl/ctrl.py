@@ -50,3 +50,5 @@ def startComponent(binaryPath, pidPath, componentName, screenName):
   else:
     print >> sys.stderr, "ERROR: %s did not start." % componentName
     exit(1)
+
+  execCmd("screen -x %s" % screenName)
