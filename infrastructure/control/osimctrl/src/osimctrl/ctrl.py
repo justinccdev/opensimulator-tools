@@ -88,8 +88,10 @@ def startComponent(binaryPath, pidPath, componentName, screenName):
   
   # If PID isn't set then we'll check the screen list.  
   # However, this is a much less perfect mechanism since OpenSimulator may have been started outside screen
-  if findScreen(screenName):
-    print >> sys.stderr, "ERROR: Screen session named %s for %s already started." % (screenName, componentName)
+  screen = findScreen(screenName)
+  
+  if screen != None:
+    print >> sys.stderr, "Screen session %s already started." % (screen.group(1))
     sys.exit(1)
     
   chdir(binaryPath)
