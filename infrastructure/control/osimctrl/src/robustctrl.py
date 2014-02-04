@@ -5,10 +5,10 @@ import osimctrl.ctrl as osc
 
 ### CONFIGURE THESE PATHS ###
 binaryPath = "/home/opensim/opensim/opensim-current/bin"
-pidPath = "/tmp/OpenSim.pid"
+pidPath = "/tmp/Robust.pid"
 ### END OF CONFIG ###
 
-componentName = "OpenSim"
+componentName = "Robust"
 screenName = componentName
 
 ### SCRIPT ###
