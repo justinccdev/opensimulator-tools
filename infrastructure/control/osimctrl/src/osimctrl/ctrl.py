@@ -40,7 +40,7 @@ def execCommand(command, binaryPath, componentName, screenName):
   if command == "attach":
     attachToComponent(screenName)
   elif command == "status":
-    getComponentStatus(componentName, screenName)
+    getComponentStatus(binaryPath, componentName, screenName)
   elif command == "start":
     startComponent(binaryPath, componentName, screenName)
   else:
@@ -55,7 +55,7 @@ def attachToComponent(screenName):
     print "Found screen %s" % screen.group(1) 
     execCmd("screen -x %s" % screenName)
   
-def getComponentStatus(componentName, screenName):
+def getComponentStatus(binaryPath, componentName, screenName):
     
   # We'll check screen even if we found PID so that we can get screen information        
   screen = findScreen(screenName)
@@ -65,12 +65,14 @@ def getComponentStatus(componentName, screenName):
   else:
     print "Found screen %s" % screen.group(1)      
     
+  print "OpenSimulator path: %s" % binaryPath
+  
   if screen != None:
     print "Status: Running"
   else:
     print "Status: Stopped"
   
-def startComponent(binaryPath, pidPath, componentName, screenName):
+def startComponent(binaryPath, componentName, screenName):
   screen = findScreen(screenName)
   
   if screen != None:
