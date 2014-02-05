@@ -27,15 +27,16 @@ console.
 # Configuration #
 
 Before use, you will need to edit the binaryPath at the top of both files to
-point them at your OpenSimulator installation.  You may also want to set the
-PIDFile option in the [Startup] section of OpenSim.ini and Robust.ini to match
-the pidpath so that 
+point them at your OpenSimulator installation.
 
-1. The scripts can detect component instances that aren't in screens.
-2. Stop it complaining about PID files not being set.
+You can also change the screen name if you want.  In the case of simctrl.py 
+you could 
+ 
+1. Copy the script
+2. Rename it
+3. Change the script name
 
-You can also change the screen name if you want to run more than one simulator
-on the same machine.
+to run more than one simulator on the same machine.
 
 # Files #
 

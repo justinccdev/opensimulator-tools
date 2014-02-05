@@ -9,10 +9,6 @@ import osimctrl.ctrl as osc
 # The path to your OpenSimulator binary directory
 binaryPath = "/home/opensim/opensim/opensim-current/bin"
 
-# It isn't critical to have a PID file, but this will allow the script to detect if the component is running outside
-# of a screen instance
-pidPath = "/tmp/OpenSim.pid"
-
 ### END OF CONFIG ###
 
 componentName = "OpenSim"
@@ -26,4 +22,4 @@ parser.add_argument('command', choices = osc.commands, help = "attach - Attach t
 
 opts = parser.parse_args()
 
-osc.execCommand(opts.command, binaryPath, pidPath, componentName, screenName)
+osc.execCommand(opts.command, binaryPath, componentName, screenName)

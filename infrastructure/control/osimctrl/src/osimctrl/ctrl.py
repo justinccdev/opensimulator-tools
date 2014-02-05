@@ -10,10 +10,6 @@ def chdir(dir):
   os.chdir(dir)
   print "Executing chdir to %s" % dir
   
-"""Returns true if the pidPath exists.  False otherwise."""
-def checkPid(pidPath):
-  return os.path.exists(pidPath)
-  
 def execCmd(cmd):  
   print "Executing command: %s" % cmd
 
@@ -33,19 +29,20 @@ def findScreen(screenName):
     screenList = cpe.output
     
   #print "screenList: %s" % screenList
-  return re.search("\s+(\d+\.%s)" % screenName, screenList)
+  # TODO: Need to improve this for screens with ( in their name
+  return re.search("\s+(\d+\.%s)\s+\(" % screenName, screenList)
   
 def getScreenList():
   return execCmd("screen -list")
 
 ### MAIN FUNCTIONS ###
-def execCommand(command, binaryPath, pidPath, componentName, screenName):
+def execCommand(command, binaryPath, componentName, screenName):
   if command == "attach":
     attachToComponent(screenName)
   elif command == "status":
-    getComponentStatus(pidPath, componentName, screenName)
+    getComponentStatus(componentName, screenName)
   elif command == "start":
-    startComponent(binaryPath, pidPath, componentName, screenName)
+    startComponent(binaryPath, componentName, screenName)
   else:
     print "Command %s not recognized" % command        
       
@@ -58,13 +55,7 @@ def attachToComponent(screenName):
     print "Found screen %s" % screen.group(1) 
     execCmd("screen -x %s" % screenName)
   
-def getComponentStatus(pidPath, componentName, screenName):
-  foundPid = checkPid(pidPath)
-  
-  if not foundPid:
-    print "Did not find PID at %s" % pidPath
-  else:
-    print "Found PID at %s" % pidPath
+def getComponentStatus(componentName, screenName):
     
   # We'll check screen even if we found PID so that we can get screen information        
   screen = findScreen(screenName)
@@ -75,23 +66,11 @@ def getComponentStatus(pidPath, componentName, screenName):
     print "Found screen %s" % screen.group(1)      
     
   if screen != None:
-    if foundPid:
-      print "Status: Running"
-    else:
-      print "Status: Running (but no PID file found)"
+    print "Status: Running"
   else:
-    if foundPid:
-      print "Status: Running (but not in a screen instance)"
-    else:
-      print "Status: Stopped"
+    print "Status: Stopped"
   
 def startComponent(binaryPath, pidPath, componentName, screenName):
-  if checkPid(pidPath):
-    print >> sys.stderr, "ERROR: %s PID file %s still present.  Assuming %s has been started already.  If not, please delete this file and retry." % (componentName, componentName, pidPath)
-    sys.exit(1)
-  
-  # If PID isn't set then we'll check the screen list.  
-  # However, this is a much less perfect mechanism since OpenSimulator may have been started outside screen
   screen = findScreen(screenName)
   
   if screen != None:
