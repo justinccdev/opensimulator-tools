@@ -5,7 +5,9 @@ import sys
 
 commands = ["attach", "start", "status"]
 
+#########################
 ### UTILITY FUNCTIONS ###
+#########################
 def chdir(dir):
   os.chdir(dir)
   print "Executing chdir to %s" % dir
@@ -35,7 +37,9 @@ def findScreen(screenName):
 def getScreenList():
   return execCmd("screen -list")
 
+######################
 ### MAIN FUNCTIONS ###
+######################
 def execCommand(command, binaryPath, componentName, screenName):
   if command == "attach":
     attachToComponent(screenName)
