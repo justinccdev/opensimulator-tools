@@ -148,4 +148,4 @@ class osimctrl:
     return re.search("\s+(\d+\.%s)\s+\(" % self._screenName, screenList)
     
   def getScreenList(self):
-    return execCmd("screen -list")    
+    return execCmd("%s -list" % self._screenPath)    
