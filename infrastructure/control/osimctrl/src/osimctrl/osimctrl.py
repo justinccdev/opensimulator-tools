@@ -24,21 +24,6 @@ def execCmd(cmd):
   # print "For output got: %s" % output
   return output
 
-def findScreen(screenName):
-  screenList = ""
-  
-  try:
-    screenList = getScreenList()
-  except subprocess.CalledProcessError as cpe:
-    screenList = cpe.output
-    
-  #print "screenList: %s" % screenList
-  # TODO: Need to improve this for screens with ( in their name
-  return re.search("\s+(\d+\.%s)\s+\(" % screenName, screenList)
-  
-def getScreenList():
-  return execCmd("screen -list")
-
 def sanitizeString(input):
   return input.replace("\r", r"\r")
 
@@ -79,7 +64,7 @@ class osimctrl:
       print "Command %s not recognized" % command        
         
   def attachToComponent(self):
-    screen = findScreen(self._screenName)
+    screen = self.findScreen()
     
     if screen == None:
       print "Did not find screen named %s for attach" % self._screenName
@@ -90,7 +75,7 @@ class osimctrl:
   def getComponentStatus(self):
       
     # We'll check screen even if we found PID so that we can get screen information        
-    screen = findScreen(self._screenName)
+    screen = self.findScreen()
       
     if screen == None:
       print "Did not find screen named %s" % self._screenName
@@ -105,7 +90,7 @@ class osimctrl:
       print "Status: Inactive"
     
   def startComponent(self):
-    screen = findScreen(self._screenName)
+    screen = self.findScreen()
     
     if screen != None:
       print >> sys.stderr, "Screen session %s already started." % (screen.group(1))
@@ -115,7 +100,7 @@ class osimctrl:
     
     execCmd("%s -S %s -d -m mono --debug %s.exe" % (self._screenPath, self._screenName, self._componentName))
     
-    screen = findScreen(self._screenName)
+    screen = self.findScreen()
     if screen != None:
       print "%s starting in screen instance %s" % (self._componentName, screen.group(1))
     else:
@@ -125,7 +110,7 @@ class osimctrl:
     execCmd("%s -x %s" % (self._screenPath, self._screenName))
     
   def stopComponent(self):
-    screen = findScreen(self._screenName)
+    screen = self.findScreen()
     
     if screen == None:
       print >> sys.stderr, "No screen session named %s to stop" % self._screenName
@@ -139,7 +124,7 @@ class osimctrl:
       time.sleep(self._pollingInterval)
       timeElapsed += self._pollingInterval      
       
-      screen = findScreen(self._screenName)
+      screen = self.findScreen()
       
       if screen == None:
         print "Screen instance %s terminated." % self._screenName
@@ -149,3 +134,18 @@ class osimctrl:
         print "Waited %s seconds for screen named %s to terminate" % (timeElapsed, self._screenName)
         
     print >> sys.stderr, "Screen %s has not terminated after %s seconds.  Please investigate." % (self._screenName, self._pollingTimeMax)
+    
+  def findScreen(self):
+    screenList = ""
+    
+    try:
+      screenList = self.getScreenList()
+    except subprocess.CalledProcessError as cpe:
+      screenList = cpe.output
+      
+    #print "screenList: %s" % screenList
+    # TODO: Need to improve this for screens with ( in their name
+    return re.search("\s+(\d+\.%s)\s+\(" % self._screenName, screenList)
+    
+  def getScreenList(self):
+    return execCmd("screen -list")    
