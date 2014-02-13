@@ -100,9 +100,9 @@ class osimctrl:
     print "OpenSimulator path: %s" % self._binaryPath
     
     if screen != None:
-      print "Status: Running"
+      print "Status: Active"
     else:
-      print "Status: Stopped"
+      print "Status: Inactive"
     
   def startComponent(self):
     screen = findScreen(self._screenName)
@@ -149,4 +149,3 @@ class osimctrl:
         print "Waited %s seconds for screen named %s to terminate" % (timeElapsed, self._screenName)
         
     print >> sys.stderr, "Screen %s has not terminated after %s seconds.  Please investigate." % (self._screenName, self._pollingTimeMax)
-
