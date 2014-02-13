@@ -12,7 +12,7 @@ import osimctrl.osimctrl as osc
 binaryPath = "/home/opensim/opensim/opensim-current/bin"
 
 # You can change this to an exact path if required.
-screenPath = "/usr/bin/screen"
+screenPath = "screen"
 
 #####################
 ### END OF CONFIG ###

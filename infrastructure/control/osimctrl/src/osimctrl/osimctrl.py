@@ -1,9 +1,10 @@
 import os.path
 import re
+import string
 import subprocess
 import sys
 
-commands = ["attach", "start", "status"]
+commands = ["attach", "start", "status", "stop"]
 
 #########################
 ### UTILITY FUNCTIONS ###
@@ -13,7 +14,7 @@ def chdir(dir):
   print "Executing chdir to %s" % dir
   
 def execCmd(cmd):  
-  print "Executing command: %s" % cmd
+  print "Executing command: %s" % sanitizeString(cmd)
 
   # Use Popen instead of subprocess.check_output as latter only exists in Python 2.7 onwards
   # output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)  
@@ -37,6 +38,9 @@ def findScreen(screenName):
 def getScreenList():
   return execCmd("screen -list")
 
+def sanitizeString(input):
+  return input.replace("\r", r"\r")
+
 ############
 ### MAIN ###
 ############
@@ -54,6 +58,8 @@ class osimctrl:
       self.getComponentStatus()
     elif command == "start":
       self.startComponent()
+    elif command == "stop":
+      self.stopComponent()
     else:
       print "Command %s not recognized" % command        
         
@@ -102,3 +108,12 @@ class osimctrl:
       exit(1)
   
     execCmd("%s -x %s" % (self.screenPath, self.screenName))
+    
+  def stopComponent(self):
+    screen = findScreen(self.screenName)
+    
+    if screen == None:
+      print >> sys.stderr, "No screen session named %s to stop" % self.screenName
+      sys.exit(1)
+      
+    execCmd("%s -S %s -p 0 -X stuff quit$(printf \r)" % (self.screenPath, self.screenName))
