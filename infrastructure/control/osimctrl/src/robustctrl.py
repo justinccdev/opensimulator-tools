@@ -28,4 +28,5 @@ parser.add_argument('command', choices = osc.commands, help = "attach - Attach t
 
 opts = parser.parse_args()
 
-osc.execCommand(opts.command, binaryPath, componentName, screenName)
+osimctrl = osc.osimctrl(binaryPath, componentName, screenName)
+osimctrl.execCommand(opts.command)

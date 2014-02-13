@@ -37,61 +37,67 @@ def findScreen(screenName):
 def getScreenList():
   return execCmd("screen -list")
 
-######################
-### MAIN FUNCTIONS ###
-######################
-def execCommand(command, binaryPath, componentName, screenName):
-  if command == "attach":
-    attachToComponent(screenName)
-  elif command == "status":
-    getComponentStatus(binaryPath, componentName, screenName)
-  elif command == "start":
-    startComponent(binaryPath, componentName, screenName)
-  else:
-    print "Command %s not recognized" % command        
+############
+### MAIN ###
+############
+class osimctrl:
+  def __init__(self, binaryPath, componentName, screenName):
+    self.binaryPath = binaryPath
+    self.componentName = componentName
+    self.screenName = screenName
+    
+  def execCommand(self, command):
+    if command == "attach":
+      self.attachToComponent()
+    elif command == "status":
+      self.getComponentStatus()
+    elif command == "start":
+      self.startComponent()
+    else:
+      print "Command %s not recognized" % command        
+        
+  def attachToComponent(self):
+    screen = findScreen(self.screenName)
+    
+    if screen == None:
+      print "Did not find screen named %s for attach" % self.screenName
+    else:
+      print "Found screen %s" % screen.group(1) 
+      execCmd("screen -x %s" % self.screenName)
+    
+  def getComponentStatus(self):
       
-def attachToComponent(screenName):
-  screen = findScreen(screenName)
-  
-  if screen == None:
-    print "Did not find screen named %s for attach" % screenName
-  else:
-    print "Found screen %s" % screen.group(1) 
-    execCmd("screen -x %s" % screenName)
-  
-def getComponentStatus(binaryPath, componentName, screenName):
+    # We'll check screen even if we found PID so that we can get screen information        
+    screen = findScreen(self.screenName)
+      
+    if screen == None:
+      print "Did not find screen named %s" % self.screenName
+    else:
+      print "Found screen %s" % screen.group(1)      
+      
+    print "OpenSimulator path: %s" % self.binaryPath
     
-  # We'll check screen even if we found PID so that we can get screen information        
-  screen = findScreen(screenName)
+    if screen != None:
+      print "Status: Running"
+    else:
+      print "Status: Stopped"
     
-  if screen == None:
-    print "Did not find screen named %s" % screenName
-  else:
-    print "Found screen %s" % screen.group(1)      
+  def startComponent(self):
+    screen = findScreen(self.screenName)
     
-  print "OpenSimulator path: %s" % binaryPath
-  
-  if screen != None:
-    print "Status: Running"
-  else:
-    print "Status: Stopped"
-  
-def startComponent(binaryPath, componentName, screenName):
-  screen = findScreen(screenName)
-  
-  if screen != None:
-    print >> sys.stderr, "Screen session %s already started." % (screen.group(1))
-    sys.exit(1)
+    if screen != None:
+      print >> sys.stderr, "Screen session %s already started." % (screen.group(1))
+      sys.exit(1)
+      
+    chdir(self.binaryPath)
     
-  chdir(binaryPath)
+    execCmd("screen -S %s -d -m mono --debug %s.exe" % (self.screenName, self.componentName))
+    
+    screen = findScreen(self.screenName)
+    if screen != None:
+      print "%s starting in screen instance %s" % (self.componentName, screen.group(1))
+    else:
+      print >> sys.stderr, "ERROR: %s did not start." % self.componentName
+      exit(1)
   
-  execCmd("screen -S %s -d -m mono --debug %s.exe" % (screenName, componentName))
-  
-  screen = findScreen(screenName)
-  if screen != None:
-    print "%s starting in screen instance %s" % (componentName, screen.group(1))
-  else:
-    print >> sys.stderr, "ERROR: %s did not start." % componentName
-    exit(1)
-
-  execCmd("screen -x %s" % screenName)
+    execCmd("screen -x %s" % self.screenName)
