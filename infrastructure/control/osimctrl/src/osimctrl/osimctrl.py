@@ -5,8 +5,6 @@ import subprocess
 import sys
 import time
 
-commands = ["attach", "start", "status", "stop"]
-
 #########################
 ### UTILITY FUNCTIONS ###
 #########################
@@ -31,6 +29,8 @@ def sanitizeString(input):
 ### MAIN ###
 ############
 class osimctrl:
+  Commands = ["attach", "start", "status", "stop"]
+  
   @property
   def pollingTimeMax(self):
     return self._pollingTimeMax
