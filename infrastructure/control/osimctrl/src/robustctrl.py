@@ -11,6 +11,9 @@ import osimctrl.osimctrl as osc
 # The path to your OpenSimulator binary directory
 binaryPath = "/home/opensim/opensim/opensim-current/bin"
 
+# You can change this to an exact path if required.
+screenPath = "/usr/bin/screen"
+
 #####################
 ### END OF CONFIG ###
 #####################
@@ -28,5 +31,5 @@ parser.add_argument('command', choices = osc.commands, help = "attach - Attach t
 
 opts = parser.parse_args()
 
-osimctrl = osc.osimctrl(binaryPath, componentName, screenName)
+osimctrl = osc.osimctrl(binaryPath, screenPath, componentName, screenName)
 osimctrl.execCommand(opts.command)

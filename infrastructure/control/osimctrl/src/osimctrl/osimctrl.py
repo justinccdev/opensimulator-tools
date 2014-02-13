@@ -41,8 +41,9 @@ def getScreenList():
 ### MAIN ###
 ############
 class osimctrl:
-  def __init__(self, binaryPath, componentName, screenName):
+  def __init__(self, binaryPath, screenPath, componentName, screenName):
     self.binaryPath = binaryPath
+    self.screenPath = screenPath
     self.componentName = componentName
     self.screenName = screenName
     
@@ -63,7 +64,7 @@ class osimctrl:
       print "Did not find screen named %s for attach" % self.screenName
     else:
       print "Found screen %s" % screen.group(1) 
-      execCmd("screen -x %s" % self.screenName)
+      execCmd("%s -x %s" % (self.screenPath, self.screenName))
     
   def getComponentStatus(self):
       
@@ -91,7 +92,7 @@ class osimctrl:
       
     chdir(self.binaryPath)
     
-    execCmd("screen -S %s -d -m mono --debug %s.exe" % (self.screenName, self.componentName))
+    execCmd("%s -S %s -d -m mono --debug %s.exe" % (self.screenPath, self.screenName, self.componentName))
     
     screen = findScreen(self.screenName)
     if screen != None:
@@ -100,4 +101,4 @@ class osimctrl:
       print >> sys.stderr, "ERROR: %s did not start." % self.componentName
       exit(1)
   
-    execCmd("screen -x %s" % self.screenName)
+    execCmd("%s -x %s" % (self.screenPath, self.screenName))
