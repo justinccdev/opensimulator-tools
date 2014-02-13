@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-import osimctrl.ctrl as osc
+import osimctrl.osimctrl as osc
 
 ### CONFIGURE THESE PATHS ###
 
