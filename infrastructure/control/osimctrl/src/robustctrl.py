@@ -4,17 +4,23 @@ import argparse
 import sys
 import osimctrl.osimctrl as osc
 
+#############################
 ### CONFIGURE THESE PATHS ###
+#############################
 
 # The path to your OpenSimulator binary directory
 binaryPath = "/home/opensim/opensim/opensim-current/bin"
 
+#####################
 ### END OF CONFIG ###
+#####################
 
 componentName = "Robust"
 screenName = componentName
 
+##############
 ### SCRIPT ###
+##############
 parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter)
 
 # TODO: construct help automatically from ctrl module
