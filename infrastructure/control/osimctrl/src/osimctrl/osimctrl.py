@@ -48,9 +48,10 @@ class OSimCtrl:
     
     self._pollingTimeMax = value
   
-  def __init__(self, binaryPath, screenPath, componentName, screenName):
+  def __init__(self, binaryPath, screenPath, monoPath, componentName, screenName):
     self._binaryPath = binaryPath
     self._screenPath = screenPath
+    self._monoPath = monoPath
     self._componentName = componentName
     self._screenName = screenName
     self._pollingTimeMax = 300
@@ -104,7 +105,7 @@ class OSimCtrl:
       
     chdir(self._binaryPath)
     
-    execCmd("%s -S %s -d -m mono --debug %s.exe" % (self._screenPath, self._screenName, self._componentName))
+    execCmd("%s -S %s -d -m %s %s.exe" % (self._screenPath, self._screenName, self._monoPath, self._componentName))
     
     screen = self.findScreen()
     if screen != None:
@@ -159,7 +160,7 @@ class OSimCtrl:
 ###############################
 ### COMMON SCRIPT FUNCTIONS ###
 ###############################
-def main(binaryPath, screenPath, componentName, screenName):
+def main(binaryPath, screenPath, monoPath, componentName, screenName):
   commands = OSimCtrl.Commands
   parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter)
   
@@ -170,5 +171,5 @@ def main(binaryPath, screenPath, componentName, screenName):
   
   opts = parser.parse_args()
   
-  osimctrl = OSimCtrl(binaryPath, screenPath, componentName, screenName)
+  osimctrl = OSimCtrl(binaryPath, screenPath, monoPath, componentName, screenName)
   osimctrl.execCommand(opts.command)  
