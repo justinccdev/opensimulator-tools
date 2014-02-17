@@ -58,13 +58,13 @@ class OSimCtrl:
     self._pollingInterval = 1
     self._pollingNotificationInterval = 5
         
-  def execCommand(self, command):
+  def execCommand(self, command, opts):
     if command == "attach":
       self.attachToComponent()
     elif command == "status":
       self.getComponentStatus()
     elif command == "start":
-      self.startComponent()
+      self.startComponent(opts)
     elif command == "stop":
       self.stopComponent()
     else:
@@ -96,7 +96,7 @@ class OSimCtrl:
     else:
       print "Status: Inactive"
     
-  def startComponent(self):
+  def startComponent(self, opts):
     screen = self.findScreen()
     
     if screen != None:
@@ -114,7 +114,8 @@ class OSimCtrl:
       print >> sys.stderr, "ERROR: %s did not start." % self._componentName
       exit(1)
   
-    execCmd("%s -x %s" % (self._screenPath, self._screenName))
+    if not opts.noattach:
+      execCmd("%s -x %s" % (self._screenPath, self._screenName))
     
   def stopComponent(self):
     screen = self.findScreen()
@@ -169,7 +170,13 @@ def main(binaryPath, screenPath, monoPath, componentName, screenName):
     choices = commands.keys(), 
     help = "\n".join(["%s - %s" % (k, v['help']) for k, v in commands.iteritems()]))
   
+  parser.add_argument(
+    '-n', 
+    '--noattach', 
+    help = "Start and restart ommmands will not attach to the started screen instance.",
+    action = "store_true") 
+  
   opts = parser.parse_args()
   
   osimctrl = OSimCtrl(binaryPath, screenPath, monoPath, componentName, screenName)
-  osimctrl.execCommand(opts.command)  
+  osimctrl.execCommand(opts.command, opts)  
