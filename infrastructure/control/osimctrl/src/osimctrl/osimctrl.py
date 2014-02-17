@@ -69,8 +69,7 @@ class OSimCtrl:
     elif command == "stop":
       self.stopComponent()
     elif command == "restart":
-      self.stopComponent()
-      self.startComponent(opts)
+      self.restartComponent(opts)
     else:
       print "Command %s not recognized" % command        
         
@@ -147,6 +146,10 @@ class OSimCtrl:
         
     print >> sys.stderr, "Screen %s has not terminated after %s seconds.  Please investigate." % (self._screenName, self._pollingTimeMax)
     return False
+  
+  def restartComponent(self, opts):
+    self.stopComponent()
+    self.startComponent(opts)
     
   def findScreen(self):
     screenList = ""
