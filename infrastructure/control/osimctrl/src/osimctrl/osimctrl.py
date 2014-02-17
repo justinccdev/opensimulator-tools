@@ -31,10 +31,11 @@ def sanitizeString(input):
 ################
 class OSimCtrl:
   Commands = {
-    "attach" : { "help" : "Attach to screen process for this component if running." },
     "start" : { "help" : "Start this component in a screen process." },
-    "status" : { "help" : "Status of this component." },
-    "stop" : { "help" : "Stop this component." }
+    "stop" : { "help" : "Stop this component." },
+    "restart" : { "help" : "Stop and start this component." },
+    "attach" : { "help" : "Attach to screen process for this component if running." },    
+    "status" : { "help" : "Status of this component." },    
   }
   
   @property
@@ -67,6 +68,9 @@ class OSimCtrl:
       self.startComponent(opts)
     elif command == "stop":
       self.stopComponent()
+    elif command == "restart":
+      self.stopComponent()
+      self.startComponent(opts)
     else:
       print "Command %s not recognized" % command        
         
@@ -101,7 +105,7 @@ class OSimCtrl:
     
     if screen != None:
       print >> sys.stderr, "Screen session %s already started." % (screen.group(1))
-      sys.exit(1)
+      return False
       
     chdir(self._binaryPath)
     
@@ -112,7 +116,7 @@ class OSimCtrl:
       print "%s starting in screen instance %s" % (self._componentName, screen.group(1))
     else:
       print >> sys.stderr, "ERROR: %s did not start." % self._componentName
-      exit(1)
+      return False
   
     if not opts.noattach:
       execCmd("%s -x %s" % (self._screenPath, self._screenName))
@@ -122,7 +126,7 @@ class OSimCtrl:
     
     if screen == None:
       print >> sys.stderr, "No screen session named %s to stop" % self._screenName
-      sys.exit(1)
+      return False
       
     execCmd("%s -S %s -p 0 -X stuff quit$(printf \r)" % (self._screenPath, self._screenName))
     
@@ -136,12 +140,13 @@ class OSimCtrl:
       
       if screen == None:
         print "Screen instance %s terminated." % self._screenName
-        return
+        return True
       
       if timeElapsed % self._pollingNotificationInterval == 0:
         print "Waited %s seconds for screen named %s to terminate" % (timeElapsed, self._screenName)
         
     print >> sys.stderr, "Screen %s has not terminated after %s seconds.  Please investigate." % (self._screenName, self._pollingTimeMax)
+    return False
     
   def findScreen(self):
     screenList = ""
