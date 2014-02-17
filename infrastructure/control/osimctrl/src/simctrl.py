@@ -24,10 +24,13 @@ screenName = componentName
 ##############
 ### SCRIPT ###
 ##############
+commands = osc.osimctrl.Commands
 parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter)
 
-# TODO: construct help automatically from ctrl module
-parser.add_argument('command', choices = osc.osimctrl.Commands, help = "attach - Attach to screen process for this component if running.\nstart  - Start this component in a screen process.\nstatus - Status of this component")
+parser.add_argument(
+  'command', 
+  choices = commands.keys(), 
+  help = "\n".join(["%s - %s" % (k, v['help']) for k, v in commands.iteritems()]))
 
 opts = parser.parse_args()
 

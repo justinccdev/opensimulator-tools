@@ -29,7 +29,12 @@ def sanitizeString(input):
 ### MAIN ###
 ############
 class osimctrl:
-  Commands = ["attach", "start", "status", "stop"]
+  Commands = {
+    "attach" : { "help" : "Attach to screen process for this component if running." },
+    "start" : { "help" : "Start this component in a screen process." },
+    "status" : { "help" : "Status of this component." },
+    "stop" : { "help" : "Stop this component." }
+  }
   
   @property
   def pollingTimeMax(self):
