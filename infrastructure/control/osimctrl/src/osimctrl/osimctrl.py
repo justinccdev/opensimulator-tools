@@ -58,8 +58,9 @@ class OSimCtrl:
     self._pollingTimeMax = 300
     self._pollingInterval = 1
     self._pollingNotificationInterval = 5
-        
+                
   def execCommand(self, command, opts):
+    """Execute a command.  Returns True on success, False otherwise."""
     if command == "attach":
       self.attachToComponent()
     elif command == "status":
@@ -74,15 +75,19 @@ class OSimCtrl:
       print "Command %s not recognized" % command        
         
   def attachToComponent(self):
+    """Attach to a screen running the component.  Returns True on success, False otherwise."""
     screen = self.findScreen()
     
     if screen == None:
       print "Did not find screen named %s for attach" % self._screenName
+      return False
     else:
       print "Found screen %s" % screen.group(1) 
       execCmd("%s -x %s" % (self._screenPath, self._screenName))
+      return True
     
   def getComponentStatus(self):
+    """Get the status of the given component.  Returns True if active, False if inactive or problem finding."""
       
     # We'll check screen even if we found PID so that we can get screen information        
     screen = self.findScreen()
@@ -90,16 +95,19 @@ class OSimCtrl:
     if screen == None:
       print "Did not find screen named %s" % self._screenName
     else:
-      print "Found screen %s" % screen.group(1)      
+      print "Found screen %s" % screen.group(1)
       
     print "OpenSimulator path: %s" % self._binaryPath
     
     if screen != None:
       print "Status: Active"
+      return True
     else:
       print "Status: Inactive"
+      return False
     
   def startComponent(self, opts):
+    """Start the given component.  Returns True on success, False otherwise"""
     screen = self.findScreen()
     
     if screen != None:
@@ -119,9 +127,12 @@ class OSimCtrl:
   
     if not opts.noattach:
       execCmd("%s -x %s" % (self._screenPath, self._screenName))
+      
+    return True
     
   def stopComponent(self):
-    screen = self.findScreen()
+    """Stop the given component.  Returns True on success, False if the component was already stopped or if there was a problem stopping."""
+    screen = self.findScreen()    
     
     if screen == None:
       print >> sys.stderr, "No screen session named %s to stop" % self._screenName
@@ -148,10 +159,12 @@ class OSimCtrl:
     return False
   
   def restartComponent(self, opts):
+    """Restart the given component.  Returns True on success, False otherwise."""
     self.stopComponent()
-    self.startComponent(opts)
+    return self.startComponent(opts)
     
   def findScreen(self):
+    """Try to find the screen instance for this component.  Returns the screen name on success, None otherwise."""
     screenList = ""
     
     try:
@@ -164,6 +177,7 @@ class OSimCtrl:
     return re.search("\s+(\d+\.%s)\s+\(" % self._screenName, screenList)
     
   def getScreenList(self):
+    """Get a list of available screens directly from the screen command."""
     return execCmd("%s -list" % self._screenPath)  
   
 ###############################
