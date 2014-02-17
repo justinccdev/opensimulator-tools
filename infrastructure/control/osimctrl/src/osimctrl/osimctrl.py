@@ -1,3 +1,4 @@
+import argparse
 import os.path
 import re
 import string
@@ -23,12 +24,12 @@ def execCmd(cmd):
   return output
 
 def sanitizeString(input):
-  return input.replace("\r", r"\r")
+  return input.replace("\r", r"\r")  
 
-############
-### MAIN ###
-############
-class osimctrl:
+################
+### OSIMCTRL ###
+################
+class OSimCtrl:
   Commands = {
     "attach" : { "help" : "Attach to screen process for this component if running." },
     "start" : { "help" : "Start this component in a screen process." },
@@ -153,4 +154,21 @@ class osimctrl:
     return re.search("\s+(\d+\.%s)\s+\(" % self._screenName, screenList)
     
   def getScreenList(self):
-    return execCmd("%s -list" % self._screenPath)    
+    return execCmd("%s -list" % self._screenPath)  
+  
+###############################
+### COMMON SCRIPT FUNCTIONS ###
+###############################
+def main(binaryPath, screenPath, componentName, screenName):
+  commands = OSimCtrl.Commands
+  parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter)
+  
+  parser.add_argument(
+    'command', 
+    choices = commands.keys(), 
+    help = "\n".join(["%s - %s" % (k, v['help']) for k, v in commands.iteritems()]))
+  
+  opts = parser.parse_args()
+  
+  osimctrl = OSimCtrl(binaryPath, screenPath, componentName, screenName)
+  osimctrl.execCommand(opts.command)  

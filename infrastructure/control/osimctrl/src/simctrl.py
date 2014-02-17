@@ -24,15 +24,4 @@ screenName = componentName
 ##############
 ### SCRIPT ###
 ##############
-commands = osc.osimctrl.Commands
-parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter)
-
-parser.add_argument(
-  'command', 
-  choices = commands.keys(), 
-  help = "\n".join(["%s - %s" % (k, v['help']) for k, v in commands.iteritems()]))
-
-opts = parser.parse_args()
-
-osimctrl = osc.osimctrl(binaryPath, screenPath, componentName, screenName)
-osimctrl.execCommand(opts.command)
+osc.main(binaryPath, screenPath, componentName, screenName)
