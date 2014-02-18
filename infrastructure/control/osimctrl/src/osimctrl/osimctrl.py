@@ -195,7 +195,7 @@ def main(binaryPath, screenPath, monoPath, componentName, screenName):
   parser.add_argument(
     '-n', 
     '--noattach', 
-    help = "Start and restart ommmands will not attach to the started screen instance.",
+    help = "Start and restart commmands will not attach to the started screen instance.",
     action = "store_true") 
   
   opts = parser.parse_args()
