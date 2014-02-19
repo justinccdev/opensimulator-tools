@@ -3,12 +3,11 @@
 import sys
 import osimctrl.osimctrl as osc
 
-##########################
-### MAIN CONFIGURATION ###
-##########################
-
-# The path to your OpenSimulator binary directory
-binaryPath = "/home/opensim/opensim/opensim-current/bin"
+try:
+  import config
+except ImportError:
+  print >> sys.stderr, "Cannot find config.py.  Have you copied this from config.py.example?"
+  sys.exit(1)
 
 ##############################
 ### OPTIONAL CONFIGURATION ###
@@ -23,10 +22,7 @@ screenName = componentName
 # You can change the mono command if you need to specify an exact path to mono or you want to add/remove switches
 monoPath = "mono --debug"
 
-# You can change this to an exact path if required.
-screenPath = "screen"
-
 ##############
 ### SCRIPT ###
 ##############
-osc.main(binaryPath, screenPath, monoPath, componentName, screenName)
+osc.main(config.binaryPath, config.screenPath, monoPath, componentName, screenName)

@@ -22,17 +22,13 @@ the future.
 
 # Configuration #
 
-Before use, you will need to edit the binaryPath at the top of both files to
-point them at your OpenSimulator installation.
+1.  Before use, you will need to copy config.py.example to config.py and
+configure it for your OpenSimulator installation.
 
-You can also change the screen name if you want.  In the case of simctrl.py 
-you could 
- 
-1. Copy the script
-2. Rename it
-3. Change the script name
-
-to run more than one simulator on the same machine.
+2.  There are also some optional configuration parameters in simctrl.py and
+robustctrl.py though you wouldn't normally need to edit these.  These control
+the name of the screen used, whether mono is started with the --debug switch,
+etc.
 
 # Use #
 
