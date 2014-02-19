@@ -58,9 +58,9 @@ Do not automatically attach to the screen component once it has started.
 If a component fails, then automatically restart it.  If you use this option
 then you can only stop the component with the stop command instead of manually
 attaching to the screen and shutting it down (since the surrounding loop will
-simply start it again).  Alternatively, you can send a SIGTERM to the bash
-script which acts as the simple loop.  This will be a child process from the
-screen instance).
+simply start it again).  Alternatively, you can send the signal SIGUSR1 to the
+bash script which acts as the simple loop.  This will be a child process from
+the screen instance).
 
 -h. --help
 

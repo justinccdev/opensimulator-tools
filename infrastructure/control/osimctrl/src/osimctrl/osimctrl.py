@@ -120,7 +120,7 @@ class OSimCtrl:
     cmd = "%s %s.exe" % (self._monoPath, self._componentName)
     
     if opts.autorestart:
-      cmd = "bash -c 'set carryon=true; trap \"carryon=false\" SIGTERM; while $carryon; do %s; done'" % (cmd) 
+      cmd = "bash -c 'set carryon=true; trap \"carryon=false\" SIGUSR1; while $carryon; do %s; done'" % (cmd) 
       
     execCmd("%s -S %s -d -m %s" % (self._screenPath, self._screenName, cmd))
     
@@ -146,10 +146,10 @@ class OSimCtrl:
 
     # If we're using the autorestart script then we need to sent it a SIGTERM first to stop it restarting
     # the component
-    # FIXME: For now, always send a SIGTERM.  If we are not using the autorestart script then this will be received
+    # FIXME: For now, always send a SIGUSR1.  If we are not using the autorestart script then this will be received
     # by the OpenSimulator mono instance instead, where it will be ignored.
     autoRestartPid = int(execCmd("ps --ppid %s -o pid=" % screen.split(".")[0]))
-    os.kill(autoRestartPid, signal.SIGTERM)
+    os.kill(autoRestartPid, signal.SIGUSR1)
           
     execCmd("%s -S %s -p 0 -X stuff quit$(printf \r)" % (self._screenPath, self._screenName))
     
