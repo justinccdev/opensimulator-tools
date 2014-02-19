@@ -1,6 +1,7 @@
 import argparse
 import os.path
 import re
+import signal
 import string
 import subprocess
 import sys
@@ -68,7 +69,7 @@ class OSimCtrl:
     elif command == "start":
       self.startComponent(opts)
     elif command == "stop":
-      self.stopComponent()
+      self.stopComponent(opts)
     elif command == "restart":
       self.restartComponent(opts)
     else:
@@ -82,7 +83,7 @@ class OSimCtrl:
       print "Did not find screen named %s for attach" % self._screenName
       return False
     else:
-      print "Found screen %s" % screen.group(1) 
+      print "Found screen %s" % screen 
       execCmd("%s -x %s" % (self._screenPath, self._screenName))
       return True
     
@@ -95,7 +96,7 @@ class OSimCtrl:
     if screen == None:
       print "Did not find screen named %s" % self._screenName
     else:
-      print "Found screen %s" % screen.group(1)
+      print "Found screen %s" % screen
       
     print "OpenSimulator path: %s" % self._binaryPath
     
@@ -111,16 +112,21 @@ class OSimCtrl:
     screen = self.findScreen()
     
     if screen != None:
-      print >> sys.stderr, "Screen session %s already started." % (screen.group(1))
+      print >> sys.stderr, "Screen session %s already started." % (screen)
       return False
       
     chdir(self._binaryPath)
     
-    execCmd("%s -S %s -d -m %s %s.exe" % (self._screenPath, self._screenName, self._monoPath, self._componentName))
+    cmd = "%s %s.exe" % (self._monoPath, self._componentName)
+    
+    if opts.autorestart:
+      cmd = "bash -c 'set carryon=true; trap \"carryon=false\" SIGTERM; while $carryon; do %s; done'" % (cmd) 
+      
+    execCmd("%s -S %s -d -m %s" % (self._screenPath, self._screenName, cmd))
     
     screen = self.findScreen()
     if screen != None:
-      print "%s starting in screen instance %s" % (self._componentName, screen.group(1))
+      print "%s starting in screen instance %s" % (self._componentName, screen)
     else:
       print >> sys.stderr, "ERROR: %s did not start." % self._componentName
       return False
@@ -130,14 +136,21 @@ class OSimCtrl:
       
     return True
     
-  def stopComponent(self):
+  def stopComponent(self, opts):
     """Stop the given component.  Returns True on success, False if the component was already stopped or if there was a problem stopping."""
     screen = self.findScreen()    
     
     if screen == None:
       print >> sys.stderr, "No screen session named %s to stop" % self._screenName
       return False
-      
+
+    # If we're using the autorestart script then we need to sent it a SIGTERM first to stop it restarting
+    # the component
+    # FIXME: For now, always send a SIGTERM.  If we are not using the autorestart script then this will be received
+    # by the OpenSimulator mono instance instead, where it will be ignored.
+    autoRestartPid = int(execCmd("ps --ppid %s -o pid=" % screen.split(".")[0]))
+    os.kill(autoRestartPid, signal.SIGTERM)
+          
     execCmd("%s -S %s -p 0 -X stuff quit$(printf \r)" % (self._screenPath, self._screenName))
     
     timeElapsed = 0
@@ -164,7 +177,7 @@ class OSimCtrl:
     return self.startComponent(opts)
     
   def findScreen(self):
-    """Try to find the screen instance for this component.  Returns the screen name on success, None otherwise."""
+    """Try to find the screen instance for this component.  Returns the screen pid.name on success, None otherwise."""
     screenList = ""
     
     try:
@@ -174,7 +187,12 @@ class OSimCtrl:
       
     #print "screenList: %s" % screenList
     # TODO: Need to improve this for screens with ( in their name
-    return re.search("\s+(\d+\.%s)\s+\(" % self._screenName, screenList)
+    res = re.search("\s+(\d+\.%s)\s+\(" % self._screenName, screenList)
+    
+    if not res == None:
+      return res.group(1)
+    else:
+      return None
     
   def getScreenList(self):
     """Get a list of available screens directly from the screen command."""
@@ -192,6 +210,12 @@ def main(binaryPath, screenPath, monoPath, componentName, screenName):
     choices = commands.keys(), 
     help = "\n".join(["%s - %s" % (k, v['help']) for k, v in commands.iteritems()]))
   
+  parser.add_argument(
+    '-a',
+    '--autorestart',
+    help = "Automatically restart component if it crashes.  With this option, it can only be stopped via the stop command, not by manually attaching to the screen and shutting down the component.",
+    action = "store_true")
+      
   parser.add_argument(
     '-n', 
     '--noattach', 
