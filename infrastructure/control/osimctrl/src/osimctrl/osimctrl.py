@@ -173,7 +173,7 @@ class OSimCtrl:
   
   def restartComponent(self, opts):
     """Restart the given component.  Returns True on success, False otherwise."""
-    self.stopComponent()
+    self.stopComponent(opts)
     return self.startComponent(opts)
     
   def findScreen(self):
