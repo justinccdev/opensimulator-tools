@@ -202,6 +202,8 @@ class OSimCtrl:
 ### COMMON SCRIPT FUNCTIONS ###
 ###############################
 def main(binaryPath, screenPath, monoPath, componentName, screenName):
+  checkSanity(binaryPath, componentName)
+  
   commands = OSimCtrl.Commands
   parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter)
   
@@ -225,4 +227,13 @@ def main(binaryPath, screenPath, monoPath, componentName, screenName):
   opts = parser.parse_args()
   
   osimctrl = OSimCtrl(binaryPath, screenPath, monoPath, componentName, screenName)
-  osimctrl.execCommand(opts.command, opts)  
+  osimctrl.execCommand(opts.command, opts)
+  
+def checkSanity(binaryPath, componentName):
+  """Check that the configured paths really exist"""
+  
+  path = "%s/%s.exe" % (binaryPath, componentName)
+  
+  if not os.path.exists(path):
+    print >> sys.stderr, "config.binaryPath '%s' does not exist!  Aborting." % path
+    sys.exit(1)  
