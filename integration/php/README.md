@@ -10,6 +10,10 @@ Please see the individual src/programs/*/README.txt for more details.  Each
 program is self-contained within its own directory, apart from references to
 common utility and config files in parent directories (e.g. utils.php).
 
+## Prerequisites ##
+1. PHP
+2. PHP curl module
+
 ## Use ##
 1. Edit config.php so that the service URIs point to your ROBUST service host
 or hosts.
