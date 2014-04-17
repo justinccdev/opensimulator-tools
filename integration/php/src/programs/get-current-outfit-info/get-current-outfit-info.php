@@ -30,7 +30,7 @@ foreach ($userIds as $userId)
 {
     if (!IsUuid($userId))
     {
-        print "ERROR: [$USER_ID] is not a well-formed user UUID.\n";
+        print "ERROR: [$userId] is not a well-formed user UUID.\n";
         continue;
     }
 
