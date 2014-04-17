@@ -1,9 +1,9 @@
 # Introduction #
 
-A bunch of miscellaneous tools that may (or may not) grow over time.
+A bunch of miscellaneous tools and scripts for OpenSimulator hosted at
+https://github.com/justincc/opensimulator-tools
 
-Patches for all these tools are welcome!  Please make a Github pull request for
-these.
+Pull requests are welcome.
 
 # Categories #
 
@@ -23,6 +23,10 @@ console
 ## infrastucture ##
 
 Tools for managing OpenSimulator instances
+
+## integration ##
+
+Example scripts for manipulating OpenSimulator from external systems.
 
 ## test ##
 
