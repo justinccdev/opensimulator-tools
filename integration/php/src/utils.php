@@ -1,6 +1,6 @@
 <?php
 
-$UUID_ZERO = "00000000-0000-0000-0000-000000000000";
+define('UUID_ZERO', '00000000-0000-0000-0000-000000000000');
 
 /*
  * Generate a UUID as used by OpenSimulator.

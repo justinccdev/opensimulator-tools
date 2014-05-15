@@ -9,5 +9,6 @@ $PRESENCE_SERVICE_URI = "http://localhost:8003/presence";
 $AVATAR_SERVICE_URI = "http://localhost:8003/avatar";
 $ASSET_SERVICE_URI = "http://localhost:8003/assets";
 $INVENTORY_SERVICE_URI = "http://localhost:8003/xinventory";
+$GROUPS_SERVICE_URI = "http://localhost:8003/groups";
 
 ?>
