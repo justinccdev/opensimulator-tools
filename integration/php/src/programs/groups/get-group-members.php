@@ -26,8 +26,8 @@ $groupUuid = $params->args['groupUuid'];
 
 if (!IsUuid($groupUuid))
 {
-    print "ERROR: [$groupUuid] is not a well-formed user UUID.\n";
+    print "ERROR: [$groupUuid] is not a well-formed UUID.\n";
     exit(-1);
 }
 
-GetGroupMembership($GROUPS_SERVICE_URI, $groupUuid, TRUE);
+GetGroupMembers($GROUPS_SERVICE_URI, $groupUuid, TRUE);

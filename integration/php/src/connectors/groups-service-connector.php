@@ -14,13 +14,31 @@ function FindGroups($serviceUri, $query, $debug = FALSE)
     $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
 }
 
-function GetGroupMembership($serviceUri, $groupUuid, $debug = FALSE)
+function GetGroupMembers($serviceUri, $groupUuid, $debug = FALSE)
 {
     $params
         = array(
             'RequestingAgentID' => UUID_ZERO,
             'GroupID' => $groupUuid,
             'METHOD' => 'GETGROUPMEMBERS');
+
+    $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
+}
+
+function GetUserMemberships($serviceUri, $userUuid, $groupUuid, $debug = FALSE)
+{
+    $params
+        = array(
+            'RequestingAgentID' => UUID_ZERO,
+            'AgentID' => $userUuid,
+            'METHOD' => 'GETMEMBERSHIP');
+            
+    if ($groupUuid == "all")
+        $params['ALL'] = '';
+    else if ($groupUuid == "active")
+        $params['GroupID'] = UUID_ZERO;
+    else
+        $params['GroupID'] = $groupUuid;
 
     $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
 }
