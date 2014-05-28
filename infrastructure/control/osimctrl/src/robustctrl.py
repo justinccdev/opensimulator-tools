@@ -25,4 +25,4 @@ monoPath = "mono --debug"
 ##############
 ### SCRIPT ###
 ##############
-osc.main(config.binaryPath, config.screenPath, monoPath, componentName, screenName)
+osc.main(config.binaryPath, config.screenPath, config.switches, monoPath, componentName, screenName)

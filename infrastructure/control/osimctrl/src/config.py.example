@@ -14,3 +14,6 @@ binaryPath = "/home/opensim/opensim/opensim-current/bin"
 # The path by which the screen command can be located.
 # If this is in your shell PATH then there is no need to change this.
 screenPath = "screen"
+
+# Optional switches that will be passed verbatim to the component when it is invoked.
+switches = ""

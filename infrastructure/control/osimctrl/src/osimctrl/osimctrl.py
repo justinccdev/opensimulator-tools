@@ -50,9 +50,10 @@ class OSimCtrl:
     
     self._pollingTimeMax = value
   
-  def __init__(self, binaryPath, screenPath, monoPath, componentName, screenName):
+  def __init__(self, binaryPath, screenPath, switches, monoPath, componentName, screenName):
     self._binaryPath = binaryPath
     self._screenPath = screenPath
+    self._switches = switches
     self._monoPath = monoPath
     self._componentName = componentName
     self._screenName = screenName
@@ -117,7 +118,7 @@ class OSimCtrl:
       
     chdir(self._binaryPath)
     
-    cmd = "%s %s.exe" % (self._monoPath, self._componentName)
+    cmd = "%s %s.exe %s" % (self._monoPath, self._componentName, self._switches)
     
     if opts.autorestart:
       cmd = "bash -c 'set carryon=true; trap \"carryon=false\" SIGUSR1; while $carryon; do %s; done'" % (cmd) 
@@ -200,7 +201,7 @@ class OSimCtrl:
 ###############################
 ### COMMON SCRIPT FUNCTIONS ###
 ###############################
-def main(binaryPath, screenPath, monoPath, componentName, screenName):
+def main(binaryPath, screenPath, switches, monoPath, componentName, screenName):
   checkSanity(binaryPath, componentName)
   
   commands = OSimCtrl.Commands
@@ -225,7 +226,7 @@ def main(binaryPath, screenPath, monoPath, componentName, screenName):
   
   opts = parser.parse_args()
   
-  osimctrl = OSimCtrl(binaryPath, screenPath, monoPath, componentName, screenName)
+  osimctrl = OSimCtrl(binaryPath, screenPath, switches, monoPath, componentName, screenName)
   osimctrl.execCommand(opts.command, opts)
   
 def checkSanity(binaryPath, componentName):
