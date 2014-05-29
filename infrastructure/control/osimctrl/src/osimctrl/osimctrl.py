@@ -151,7 +151,7 @@ class OSimCtrl:
     if comm == "bash":
       os.kill(int(autoRestartPid), signal.SIGUSR1)
           
-    execCmd("%s -S %s -p 0 -X stuff quit$(printf \r)" % (self._screenPath, self._screenName))
+    execCmd("%s -S %s -p 0 -X stuff quit$(printf \r)" % (self._screenPath, screen))
     
     timeElapsed = 0
     
