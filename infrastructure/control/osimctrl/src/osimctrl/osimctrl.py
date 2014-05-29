@@ -85,7 +85,7 @@ class OSimCtrl:
       return False
     else:
       print "Found screen %s" % screen 
-      execCmd("%s -x %s" % (self._screenPath, self._screenName))
+      execCmd("%s -x %s" % (self._screenPath, screen))
       return True
     
   def getComponentStatus(self):
