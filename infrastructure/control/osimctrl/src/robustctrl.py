@@ -4,10 +4,10 @@ import sys
 import osimctrl.osimctrl as osc
 
 try:
-  import config
+    import config
 except ImportError:
-  print >> sys.stderr, "Cannot find config.py.  Have you copied this from config.py.example?"
-  sys.exit(1)
+    print >> sys.stderr, "Cannot find config.py.  Have you copied this from config.py.example?"
+    sys.exit(1)
 
 ##############################
 ### OPTIONAL CONFIGURATION ###
