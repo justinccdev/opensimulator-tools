@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # vim: ts=4:sw=4:et
 
+import os.path
 import re
 import sys
 
@@ -19,11 +20,21 @@ if len(sys.argv) == 1:
     sys.exit(-1)
 
 functionsFound = set()
-filenames = sys.argv[1:]
+paths = sys.argv[1:]
+files = []
 
-for filename in filenames:
+for path in paths:
+    if os.path.isdir(path):
+        entries = os.listdir(path)
+        for entry in entries:
+            fullPath = os.path.join(path, entry)
+            if os.path.isfile(fullPath):
+                files.append(fullPath)
+    else:
+        files.append(path)
 
-    lsl = file(filename).readlines()
+for f in files:
+    lsl = file(f).readlines()
     scriptFuncRe = re.compile("\s+((?:(?:ll)|(?:os)|(?:mod)|(?:Json)|(?:ls))\w+)\(");
 
     for line in lsl:
