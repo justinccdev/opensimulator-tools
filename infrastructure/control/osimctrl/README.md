@@ -49,11 +49,12 @@ status  - get the current status of the component.
 
 There are also a few optional switches
 
--n, --noattach
+-a, --attach
 
-Do not automatically attach to the screen component once it has started.
+Only valid for start and restart commands.  If set then osimctrl automatically
+attaches you to the screen of the [re]started component.
 
--a, --autorestart
+-r, --autorestart
 
 If a component fails, then automatically restart it.  If you use this option
 then you can only stop the component with the stop command instead of manually

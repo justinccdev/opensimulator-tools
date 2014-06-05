@@ -132,7 +132,7 @@ class OSimCtrl:
             print >> sys.stderr, "ERROR: %s did not start." % self._componentName
             return False
 
-        if not opts.noattach:
+        if opts.attach:
             execCmd("%s -x %s" % (self._screenPath, self._screenName))
 
         return True
@@ -213,15 +213,15 @@ def main(binaryPath, screenPath, switches, monoPath, componentName, screenName):
       help = "\n".join(["%s - %s" % (k, v['help']) for k, v in commands.iteritems()]))
 
     parser.add_argument(
-      '-a',
+      '-r',
       '--autorestart',
       help = "Automatically restart component if it crashes.  With this option, it can only be stopped via the stop command, not by manually attaching to the screen and shutting down the component.",
       action = "store_true")
 
     parser.add_argument(
-      '-n',
-      '--noattach',
-      help = "Start and restart commmands will not attach to the started screen instance.",
+      '-a',
+      '--attach',
+      help = "Start and restart commmands will also attach to the started screen instance.",
       action = "store_true")
 
     opts = parser.parse_args()
