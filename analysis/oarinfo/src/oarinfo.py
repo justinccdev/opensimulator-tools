@@ -7,7 +7,7 @@ if len(sys.argv) <= 1:
     print "Usage: %s <oar-path>" % (sys.argv[0])
     sys.exit(-1);
   
-print "Analysis of %s" % sys.argv[1]
+print "\nAnalysis of %s" % sys.argv[1]
 
 oar = tarfile.open(sys.argv[1], 'r:gz')
 
@@ -52,11 +52,14 @@ for name in oar.getnames():
         if assetExt in assetFileExtToKey:
             assetContentsKey = assetFileExtToKey[assetExt]
             assetContents[assetContentsKey] += 1
-                    
+
+# Print results of analysis
+longestKey = max(generalContents.keys() + assetContents.keys(), key = len)
+       
 for type, count in generalContents.iteritems():
-    print "%s: %s" % (type, count)
+    print "%-*s: %s" % (len(longestKey), type, count)
     
 print "\nAssets Composition"
 
 for type, count in assetContents.iteritems():
-    print "%s: %s" % (type, count)
+    print "%-*s: %s" % (len(longestKey), type, count)
