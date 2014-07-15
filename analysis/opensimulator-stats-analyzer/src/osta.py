@@ -22,10 +22,12 @@ with open(sys.argv[1]) as f:
             # print "%s: %s" % (statFullName, value)
             
             if not statFullName in data:
-                data[statFullName] = []
+                data[statFullName] = []                
                 
             data[statFullName].append(float(value))
             
-for stat, values in data.items():
+longestKey = max(data, key = len)
+    
+for statName, values in data.items():
     # print "%s: %s" % (stat, ", ".join(values))
-    print "%s: min %s, max %s" % (stat, min(values), max(values))
+    print "%-*s: %s to %s" % (len(longestKey), statName, min(values), max(values))
