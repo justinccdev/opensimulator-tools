@@ -28,6 +28,6 @@ with open(sys.argv[1]) as f:
             
 longestKey = max(data, key = len)
     
-for statName, values in data.items():
+for statName, values in sorted(data.items()):
     # print "%s: %s" % (stat, ", ".join(values))
     print "%-*s: %s to %s" % (len(longestKey), statName, min(values), max(values))
