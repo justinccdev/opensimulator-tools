@@ -15,7 +15,7 @@ data = {}
 
 with open(sys.argv[1]) as f:
     for line in f:    
-        match = lineRe.match(line.chomp)
+        match = lineRe.match(line)
         
         if match != None:
             statFullName = match.group(2)
@@ -28,7 +28,7 @@ with open(sys.argv[1]) as f:
                 
             data[statFullName].append(float(value))
         #else:
-        #   print "Ignoring [%s]" % (line)
+        #    print "Ignoring [%s]" % (line)
             
 longestKey = max(data, key = len)
     
