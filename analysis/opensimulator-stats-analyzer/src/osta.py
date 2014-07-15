@@ -9,13 +9,13 @@ if len(sys.argv) <= 1:
     sys.exit(1)
 
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
-lineRe = re.compile("(.* .*) - (.*) : ([\d\.]+)")
+lineRe = re.compile("(.* .*) - (.*) : ([\d\.-]+)")
 #lineRe = re.compile("(.* .*) - (.*) : ([\d.]+)(?\D+)?([\d.]+)?(?\D/s)?")
 data = {}
 
 with open(sys.argv[1]) as f:
     for line in f:    
-        match = lineRe.match(line)
+        match = lineRe.match(line.chomp)
         
         if match != None:
             statFullName = match.group(2)
@@ -27,6 +27,8 @@ with open(sys.argv[1]) as f:
                 data[statFullName] = []                
                 
             data[statFullName].append(float(value))
+        #else:
+        #   print "Ignoring [%s]" % (line)
             
 longestKey = max(data, key = len)
     
