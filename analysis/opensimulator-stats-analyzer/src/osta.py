@@ -8,7 +8,9 @@ if len(sys.argv) <= 1:
     print "Usage: %s <stats-log-path>"
     sys.exit(1)
 
-lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
+#lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
+lineRe = re.compile("(.* .*) - (.*) : ([\d\.]+)")
+#lineRe = re.compile("(.* .*) - (.*) : ([\d.]+)(?\D+)?([\d.]+)?(?\D/s)?")
 data = {}
 
 with open(sys.argv[1]) as f:
