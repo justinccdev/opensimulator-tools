@@ -13,6 +13,9 @@ if len(sys.argv) <= 1:
 lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[^,]+)(?:, )?(?P<delta>[^,]+)?")
 valueRe = re.compile("([^ %/]+)")
 
+# Structure
+# statName => { 'abs' : [values], 'delta' : [values] }
+# delta may not be present
 data = {}
 
 with open(sys.argv[1]) as f:
