@@ -19,7 +19,16 @@ class Osta:
         return float(valueMatch.group(1)), valueMatch.group(2)
     
     @staticmethod
-    def parse(path):          
+    def parse(path):
+        
+        # Structure
+        # category : { 
+        #    container : { 
+        #        stat : {
+        #            'abs'   : { 'values' : [], 'units' : "" },
+        #            'delta' : { 'values' : [], 'units' : "" }
+        # }  
+        # delta may not be present         
         data = {}
         
         with open(path) as f:
