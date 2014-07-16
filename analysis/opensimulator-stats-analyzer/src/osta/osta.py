@@ -33,7 +33,7 @@ class OSimStatsCorpus:
         valueMatch = valueRe.match(rawValue)
         return float(valueMatch.group(1)), valueMatch.group(2)
     
-    """Get a statistic given its full name"""
+    """Get a statistic given its full name."""
     def getStat(self, statFullName):
         if self._data == None:
             return None
@@ -45,6 +45,7 @@ class OSimStatsCorpus:
         else: 
             return None
         
+    """Clear out any existing dataset."""
     def clear(self):
         self._data = {}
         self._samplesCount = 0
