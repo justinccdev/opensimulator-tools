@@ -34,6 +34,7 @@ stat = osta.getStat(opts.select)
 if not stat == None: 
     plt.plot(stat['abs']['values'])
     plt.title(stat['fullName'])
+    plt.xlabel("samples")
     plt.ylabel(stat['name'])
     
     if 'out' in opts:
