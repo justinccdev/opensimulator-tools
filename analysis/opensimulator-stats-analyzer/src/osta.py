@@ -24,9 +24,11 @@ lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[^,]+)(?:, )?(?P<delta>[^,]+)?")
 valueRe = re.compile("([^ %/]+)(.*)")
 
 # Structure
-# statName => { 
-#    'abs'   : { 'values' : [], 'units' : "" },
-#    'delta' : { 'values' : [], 'units' : "" }
+# category : { 
+#    container : { 
+#        stat : {
+#            'abs'   : { 'values' : [], 'units' : "" },
+#            'delta' : { 'values' : [], 'units' : "" }
 # }  
 # delta may not be present
 data = {}
@@ -36,7 +38,8 @@ with open(sys.argv[1]) as f:
         match = lineRe.match(line)
         
         if match != None:
-            statFullName = match.group(2)       
+            statFullName = match.group(2)
+            (category, container, name) = statFullName.split(".")       
             
             rawValue = match.group("abs")
             #print match.lastindex
@@ -44,13 +47,20 @@ with open(sys.argv[1]) as f:
             
             value = parseValue(rawValue, valueRe)
             
-            if not statFullName in data:
-                entry = { 
-                    'abs' : { 'values' : [], 'units' : value[1] }
-                }
-                data[statFullName] = entry
+            if not category in data:
+                data[category] = {}
                 
-            stat = data[statFullName]                
+            if not container in data[category]:
+                data[category][container] = {}
+            
+            if not name in data[category][container]:
+                entry = { 
+                    'abs' : { 'values' : [], 'units' : value[1] },
+                    'fullName' : statFullName
+                }
+                data[category][container][name] = entry
+                
+            stat = data[category][container][name]           
                             
             stat['abs']['values'].append(value[0])
             
@@ -66,18 +76,25 @@ with open(sys.argv[1]) as f:
                 
         #else:
         #    print "Ignoring [%s]" % (line)
+          
+fullNames = []
+for category, containers in data.items():
+    for container, stats in containers.items():
+        for statName, stat in stats.items():
+            fullNames.append(stat['fullName'])
+                   
+longestKey = max(fullNames, key = len)
+    
+for category, containers in sorted(data.items()):
+    for container, stats in sorted(containers.items()):
+        for statName, stat in sorted(stats.items()):    
+            absValues = stat['abs']['values']    
+            sys.stdout.write(
+                "%-*s: %s to %s%s" % (
+                    len(longestKey), stat['fullName'], min(absValues), max(absValues), stat['abs']['units']))    
             
-longestKey = max(data, key = len)
-    
-for statName, stat in sorted(data.items()):
-    
-    absValues = stat['abs']['values']    
-    sys.stdout.write(
-        "%-*s: %s to %s%s" % (len(longestKey), statName, min(absValues), max(absValues), stat['abs']['units']))    
-    
-    if 'delta' in stat:
-        deltaValues = stat['delta']['values']
-        print ", %s to %s%s" % (min(deltaValues), max(deltaValues), stat['delta']['units'])
-    else:
-        print
-         
+            if 'delta' in stat:
+                deltaValues = stat['delta']['values']
+                print ", %s to %s%s" % (min(deltaValues), max(deltaValues), stat['delta']['units'])
+            else:
+                print
