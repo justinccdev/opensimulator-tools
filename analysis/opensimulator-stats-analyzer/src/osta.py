@@ -4,6 +4,16 @@ import pprint
 import re
 import sys
 
+#################
+### FUNCTIONS ###
+#################
+def parseValue(rawValue, valueRe):
+    valueMatch = valueRe.match(rawValue)
+    return float(valueMatch.group(1))          
+
+############
+### MAIN ###
+############
 if len(sys.argv) <= 1:
     print "Usage: %s <stats-log-path>"
     sys.exit(1)
@@ -27,27 +37,18 @@ with open(sys.argv[1]) as f:
             
             rawValue = match.group("abs")
             #print match.lastindex
-            #print rawValue
-                
-            valueMatch = valueRe.match(rawValue)
-            value = valueMatch.group(1)            
-                        
-                # print "%s: %s" % (statFullName, value)                
+            #print rawValue                                                            
             
             if not statFullName in data:
                 entry = { 'abs' : [], 'delta' : [] }
                 data[statFullName] = entry                
                 
-            data[statFullName]['abs'].append(float(value))
+            data[statFullName]['abs'].append(parseValue(rawValue, valueRe))
             
             # Handle delta value if present
             if match.group("delta"):                
-                rawValue = match.group("delta")
-                
-                valueMatch = valueRe.match(rawValue)
-                value = valueMatch.group(1)               
-                    
-                data[statFullName]['delta'].append(float(value))                
+                rawValue = match.group("delta")                                 
+                data[statFullName]['delta'].append(parseValue(rawValue, valueRe))                
                 
         #else:
         #    print "Ignoring [%s]" % (line)
