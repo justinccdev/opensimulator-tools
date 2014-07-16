@@ -23,9 +23,9 @@ parser.add_argument(
 
 opts = parser.parse_args()
 
-osta = Osta()
-osta.parse(opts.statsLogPath)
-data = osta.data
+corpus = OSimStatsCorpus()
+corpus.parse(opts.statsLogPath)
+data = corpus.data
 
 fullNames = []
 for category, containers in data.items():

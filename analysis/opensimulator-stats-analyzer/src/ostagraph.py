@@ -26,10 +26,10 @@ parser.add_argument(
 
 opts = parser.parse_args()
 
-osta = Osta()
-osta.parse(opts.statsLogPath)
+corpus = OSimStatsCorpus()
+corpus.parse(opts.statsLogPath)
 
-stat = osta.getStat(opts.select)
+stat = corpus.getStat(opts.select)
 
 if not stat == None: 
     plt.plot(stat['abs']['values'])

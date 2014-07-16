@@ -12,7 +12,7 @@ valueRe = re.compile("([^ %/]+)(.*)")
 ############
 ### Osta ###
 ############
-class Osta:
+class OSimStatsCorpus:
     
     _data = None
     
@@ -65,7 +65,7 @@ class Osta:
                     #print match.lastindex
                     #print rawValue                                                            
                     
-                    value = Osta.parseValue(rawValue, valueRe)
+                    value = OSimStatsCorpus.parseValue(rawValue, valueRe)
                     
                     if not category in data:
                         data[category] = {}
@@ -88,7 +88,7 @@ class Osta:
                     # Handle delta value if present
                     if match.group("delta"):                
                         rawValue = match.group("delta")
-                        value = Osta.parseValue(rawValue, valueRe)
+                        value = OSimStatsCorpus.parseValue(rawValue, valueRe)
                         
                         if not 'delta' in stat:
                             stat['delta'] = { 'values' : [], 'units' : value[1] }
