@@ -28,14 +28,12 @@ opts = parser.parse_args()
 
 osta = Osta()
 osta.parse(opts.statsLogPath)
-data = osta.data
 
-# TODO: We will move this kind of check inside Osta shortly
-(category, container, name) = opts.select.split(".")
+stat = osta.getStat(opts.select)
 
-if (category in data and container in data[category] and name in data[category][container]):
-    plt.plot(data[category][container][name]['abs']['values'])
-    plt.ylabel(opts.select)
+if not stat == None: 
+    plt.plot(stat['abs']['values'])
+    plt.ylabel(stat['fullName'])
     
     if 'out' in opts:
         savefig(opts.out)

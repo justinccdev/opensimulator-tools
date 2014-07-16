@@ -28,6 +28,19 @@ class Osta:
         valueMatch = valueRe.match(rawValue)
         return float(valueMatch.group(1)), valueMatch.group(2)
     
+    """Get a statistic given its full name"""
+    def getStat(self, statFullName):
+        if self._data == None:
+            return None
+        
+        (category, container, name) = statFullName.split(".")
+        
+        if category in self._data and container in self._data[category] and name in self._data[category][container]:
+            return self._data[category][container][name]     
+        else: 
+            return None   
+    
+    """Parse OpenSimulator stats log data from the given path."""
     def parse(self, path):
         
         # Structure
