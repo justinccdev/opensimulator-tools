@@ -51,3 +51,5 @@ for category, containers in sorted(data.items()):
                 print ", %s to %s%s" % (min(deltaValues), max(deltaValues), stat['delta']['units'])
             else:
                 print
+
+print "\nFrom %s samples" % (len(corpus))

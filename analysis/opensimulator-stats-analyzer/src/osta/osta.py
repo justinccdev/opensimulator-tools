@@ -7,21 +7,26 @@ import sys
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
 #lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[\d\.-]+)(?: (?:\D+))?(?P<delta>[\d\.-]+)?")
 lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[^,]+)(?:, )?(?P<delta>[^,]+)?")
+statsReportStartRe = re.compile(" - \*\*\* STATS REPORT AT")
 valueRe = re.compile("([^ %/]+)(.*)")
 
 ############
 ### Osta ###
 ############
 class OSimStatsCorpus:
-    
-    _data = None
+        
+    _data = {}    
+    _samplesCount = 0
     
     @property
     def data(self):
-        return self._data    
+        return self._data        
     
     def __init__(self):
         pass
+    
+    def __len__(self):
+        return self._samplesCount
         
     @staticmethod
     def parseValue(rawValue, valueRe):
@@ -50,8 +55,10 @@ class OSimStatsCorpus:
         #            'abs'   : { 'values' : [], 'units' : "" },
         #            'delta' : { 'values' : [], 'units' : "" }
         # }  
-        # delta may not be present         
+        # delta may not be present
+                 
         data = {}
+        samplesCount = 0
         
         with open(path) as f:
             for line in f:    
@@ -93,9 +100,15 @@ class OSimStatsCorpus:
                         if not 'delta' in stat:
                             stat['delta'] = { 'values' : [], 'units' : value[1] }
                             
-                        stat['delta']['values'].append(value[0])                
-                        
-                #else:
-                #    print "Ignoring [%s]" % (line)
+                        stat['delta']['values'].append(value[0])
+                                                                
+                else:
+                    match = statsReportStartRe.search(line)
+                    
+                    if (match != None):
+                        samplesCount += 1
+                    else:
+                        print "Ignoring [%s]" % (line)
                 
         self._data = data
+        self._samplesCount = samplesCount
