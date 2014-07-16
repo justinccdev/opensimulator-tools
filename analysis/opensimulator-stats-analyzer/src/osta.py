@@ -9,8 +9,7 @@ if len(sys.argv) <= 1:
     sys.exit(1)
 
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
-lineRe = re.compile("(.* .*) - (.*) : ([\d\.-]+)")
-#lineRe = re.compile("(.* .*) - (.*) : ([\d.]+)(?\D+)?([\d.]+)?(?\D/s)?")
+lineRe = re.compile("(.* .*) - (.*) : ([\d\.-]+)(?:\D+)?([\d\.-]+)?")
 data = {}
 
 with open(sys.argv[1]) as f:
@@ -19,9 +18,13 @@ with open(sys.argv[1]) as f:
         
         if match != None:
             statFullName = match.group(2)
-            value = match.group(3)
             
-            # print "%s: %s" % (statFullName, value)
+            # If this is a single value or a percentage, then only first number group will match and
+            # that's the value we want.
+            # If this is a change over time stat, then the second number group will match and that's the one we want
+            value = match.group(match.lastindex)
+            
+                # print "%s: %s" % (statFullName, value)
             
             if not statFullName in data:
                 data[statFullName] = []                
