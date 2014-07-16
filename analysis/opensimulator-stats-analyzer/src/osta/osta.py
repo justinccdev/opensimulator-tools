@@ -13,13 +13,16 @@ valueRe = re.compile("([^ %/]+)(.*)")
 ### Osta ###
 ############
 class Osta:
+    
+    def __init__(self):
+        pass
+        
     @staticmethod
     def parseValue(rawValue, valueRe):
         valueMatch = valueRe.match(rawValue)
         return float(valueMatch.group(1)), valueMatch.group(2)
     
-    @staticmethod
-    def parse(path):
+    def parse(self, path):
         
         # Structure
         # category : { 

@@ -26,7 +26,8 @@ parser.add_argument(
 
 opts = parser.parse_args()
 
-data = Osta.parse(opts.statsLogPath)
+osta = Osta()
+data = osta.parse(opts.statsLogPath)
 
 # TODO: We will move this kind of check inside Osta shortly
 (category, container, name) = opts.select.split(".")

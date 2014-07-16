@@ -23,7 +23,8 @@ parser.add_argument(
 
 opts = parser.parse_args()
 
-data = Osta.parse(opts.statsLogPath)
+osta = Osta()
+data = osta.parse(opts.statsLogPath)
 
 fullNames = []
 for category, containers in data.items():
