@@ -23,7 +23,7 @@ class OSimStatsCorpus:
         return self._data        
     
     def __init__(self):
-        pass
+        self.clear()
     
     def __len__(self):
         return self._samplesCount
@@ -43,11 +43,14 @@ class OSimStatsCorpus:
         if category in self._data and container in self._data[category] and name in self._data[category][container]:
             return self._data[category][container][name]     
         else: 
-            return None   
-    
-    """Parse OpenSimulator stats log data from the given path."""
-    def parse(self, path):
+            return None
         
+    def clear(self):
+        self._data = {}
+        self._samplesCount = 0
+    
+    """Parse OpenSimulator stats log data from the given path and merge into any existing data."""    
+    def parse(self, path):        
         # Structure
         # category : { 
         #    container : { 
@@ -56,10 +59,7 @@ class OSimStatsCorpus:
         #            'delta' : { 'values' : [], 'units' : "" }
         # }  
         # delta may not be present
-                 
-        self._data = {}
-        self._samplesCount = 0
-        
+                         
         with open(path) as f:
             for line in f:    
                 match = lineRe.match(line)
