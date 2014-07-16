@@ -14,6 +14,12 @@ valueRe = re.compile("([^ %/]+)(.*)")
 ############
 class Osta:
     
+    _data = None
+    
+    @property
+    def data(self):
+        return self._data    
+    
     def __init__(self):
         pass
         
@@ -78,4 +84,4 @@ class Osta:
                 #else:
                 #    print "Ignoring [%s]" % (line)
                 
-        return data
+        self._data = data

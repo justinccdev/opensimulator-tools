@@ -17,7 +17,7 @@ parser.add_argument(
 parser.add_argument(
     '--out',
     help = "Path to output the graph rather the interactively display.  Filename extension determines graphics type (e.g. \"graph.jpg\")",
-    )
+    default = argparse.SUPPRESS)
 
 parser.add_argument(
     'statsLogPath', 
@@ -27,7 +27,8 @@ parser.add_argument(
 opts = parser.parse_args()
 
 osta = Osta()
-data = osta.parse(opts.statsLogPath)
+osta.parse(opts.statsLogPath)
+data = osta.data
 
 # TODO: We will move this kind of check inside Osta shortly
 (category, container, name) = opts.select.split(".")
