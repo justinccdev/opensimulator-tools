@@ -13,8 +13,7 @@ if len(sys.argv) <= 1:
 lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[^,]+)(?:, )?(?P<delta>[^,]+)?")
 valueRe = re.compile("([^ %/]+)")
 
-dataAbs = {}
-dataDelta = {}
+data = {}
 
 with open(sys.argv[1]) as f:
     for line in f:    
@@ -46,39 +45,38 @@ with open(sys.argv[1]) as f:
                 
             valueMatch = valueRe.match(rawValue)
             value = valueMatch.group(1)            
-            
-            
+                        
                 # print "%s: %s" % (statFullName, value)                
             
-            if not statFullName in dataAbs:
-                dataAbs[statFullName] = []                
+            if not statFullName in data:
+                entry = { 'abs' : [], 'delta' : [] }
+                data[statFullName] = entry                
                 
-            dataAbs[statFullName].append(float(value))
+            data[statFullName]['abs'].append(float(value))
             
             # Handle delta value if present
             if match.lastindex > 3 and match.group("delta"):
                 rawValue = match.group("delta")
                 
                 valueMatch = valueRe.match(rawValue)
-                value = valueMatch.group(1)
-                
-                if not statFullName in dataDelta:
-                    dataDelta[statFullName] = []                
+                value = valueMatch.group(1)               
                     
-                dataDelta[statFullName].append(float(value))                
+                data[statFullName]['delta'].append(float(value))                
                 
         #else:
         #    print "Ignoring [%s]" % (line)
             
-longestKey = max(dataAbs, key = len)
+longestKey = max(data, key = len)
     
-for statName, values in sorted(dataAbs.items()):
-    # print "%s: %s" % (stat, ", ".join(values))
-    sys.stdout.write("%-*s: %s to %s" % (len(longestKey), statName, min(values), max(values)))
+for statName, values in sorted(data.items()):
     
-    if statName in dataDelta:
-        values = dataDelta[statName]
-        print ", %s to %s" % (min(values), max(values))
+    absValues = values['abs']    
+    sys.stdout.write("%-*s: %s to %s" % (len(longestKey), statName, min(absValues), max(absValues)))
+    
+    deltaValues = values['delta']
+    
+    if len(deltaValues) > 0:
+        print ", %s to %s" % (min(deltaValues), max(deltaValues))
     else:
         print
          
