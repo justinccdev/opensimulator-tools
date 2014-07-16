@@ -57,8 +57,8 @@ class OSimStatsCorpus:
         # }  
         # delta may not be present
                  
-        data = {}
-        samplesCount = 0
+        self._data = {}
+        self._samplesCount = 0
         
         with open(path) as f:
             for line in f:    
@@ -74,21 +74,21 @@ class OSimStatsCorpus:
                     
                     value = OSimStatsCorpus.parseValue(rawValue, valueRe)
                     
-                    if not category in data:
-                        data[category] = {}
+                    if not category in self._data:
+                        self._data[category] = {}
                         
-                    if not container in data[category]:
-                        data[category][container] = {}
+                    if not container in self._data[category]:
+                        self._data[category][container] = {}
                     
-                    if not name in data[category][container]:
+                    if not name in self._data[category][container]:
                         entry = { 
                             'abs' : { 'values' : [], 'units' : value[1] },
                             'fullName' : statFullName,
                             'name' : name
                         }
-                        data[category][container][name] = entry
+                        self._data[category][container][name] = entry
                         
-                    stat = data[category][container][name]           
+                    stat = self._data[category][container][name]           
                                     
                     stat['abs']['values'].append(value[0])
                     
@@ -106,9 +106,6 @@ class OSimStatsCorpus:
                     match = statsReportStartRe.search(line)
                     
                     if (match != None):
-                        samplesCount += 1
+                        self._samplesCount += 1
                     else:
-                        print "Ignoring [%s]" % (line)
-                
-        self._data = data
-        self._samplesCount = samplesCount
+                        print "Ignoring [%s]" % (line)                
