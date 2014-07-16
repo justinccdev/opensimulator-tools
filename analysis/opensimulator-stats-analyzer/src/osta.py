@@ -9,7 +9,7 @@ import sys
 #################
 def parseValue(rawValue, valueRe):
     valueMatch = valueRe.match(rawValue)
-    return float(valueMatch.group(1))          
+    return float(valueMatch.group(1)), valueMatch.group(2)          
 
 ############
 ### MAIN ###
@@ -21,10 +21,13 @@ if len(sys.argv) <= 1:
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
 #lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[\d\.-]+)(?: (?:\D+))?(?P<delta>[\d\.-]+)?")
 lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[^,]+)(?:, )?(?P<delta>[^,]+)?")
-valueRe = re.compile("([^ %/]+)")
+valueRe = re.compile("([^ %/]+)(.*)")
 
 # Structure
-# statName => { 'abs' : [values], 'delta' : [values] }
+# statName => { 
+#    'abs'   : { 'values' : [], 'units' : "" },
+#    'delta' : { 'values' : [], 'units' : "" }
+# }  
 # delta may not be present
 data = {}
 
@@ -39,31 +42,42 @@ with open(sys.argv[1]) as f:
             #print match.lastindex
             #print rawValue                                                            
             
+            value = parseValue(rawValue, valueRe)
+            
             if not statFullName in data:
-                entry = { 'abs' : [], 'delta' : [] }
-                data[statFullName] = entry                
+                entry = { 
+                    'abs' : { 'values' : [], 'units' : value[1] }
+                }
+                data[statFullName] = entry
                 
-            data[statFullName]['abs'].append(parseValue(rawValue, valueRe))
+            stat = data[statFullName]                
+                            
+            stat['abs']['values'].append(value[0])
             
             # Handle delta value if present
             if match.group("delta"):                
-                rawValue = match.group("delta")                                 
-                data[statFullName]['delta'].append(parseValue(rawValue, valueRe))                
+                rawValue = match.group("delta")
+                value = parseValue(rawValue, valueRe)
+                
+                if not 'delta' in stat:
+                    stat['delta'] = { 'values' : [], 'units' : value[1] }
+                    
+                stat['delta']['values'].append(value[0])                
                 
         #else:
         #    print "Ignoring [%s]" % (line)
             
 longestKey = max(data, key = len)
     
-for statName, values in sorted(data.items()):
+for statName, stat in sorted(data.items()):
     
-    absValues = values['abs']    
-    sys.stdout.write("%-*s: %s to %s" % (len(longestKey), statName, min(absValues), max(absValues)))
+    absValues = stat['abs']['values']    
+    sys.stdout.write(
+        "%-*s: %s to %s%s" % (len(longestKey), statName, min(absValues), max(absValues), stat['abs']['units']))    
     
-    deltaValues = values['delta']
-    
-    if len(deltaValues) > 0:
-        print ", %s to %s" % (min(deltaValues), max(deltaValues))
+    if 'delta' in stat:
+        deltaValues = stat['delta']['values']
+        print ", %s to %s%s" % (min(deltaValues), max(deltaValues), stat['delta']['units'])
     else:
         print
          
