@@ -33,7 +33,8 @@ stat = osta.getStat(opts.select)
 
 if not stat == None: 
     plt.plot(stat['abs']['values'])
-    plt.ylabel(stat['fullName'])
+    plt.title(stat['fullName'])
+    plt.ylabel(stat['name'])
     
     if 'out' in opts:
         savefig(opts.out)

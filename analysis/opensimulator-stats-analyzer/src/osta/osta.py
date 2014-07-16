@@ -76,7 +76,8 @@ class Osta:
                     if not name in data[category][container]:
                         entry = { 
                             'abs' : { 'values' : [], 'units' : value[1] },
-                            'fullName' : statFullName
+                            'fullName' : statFullName,
+                            'name' : name
                         }
                         data[category][container][name] = entry
                         
