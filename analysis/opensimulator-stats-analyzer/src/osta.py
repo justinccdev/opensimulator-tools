@@ -20,28 +20,11 @@ with open(sys.argv[1]) as f:
         match = lineRe.match(line)
         
         if match != None:
-            statFullName = match.group(2) 
-
-            """            
-            # If this is a single value or a percentage, then only first number group will match and
-            # that's the value we want.
-            # If this is a change over time stat, then the second number group will match and that's the one we want
-            if not match.group("delta"):
-                value = match.group("abs")
-            else:
-                value = match.group("delta")
-            """          
+            statFullName = match.group(2)       
             
             rawValue = match.group("abs")
             #print match.lastindex
             #print rawValue
-            
-            """
-            if not match.group("delta"):
-                rawValue = match.group("abs")
-            else:
-                rawValue = match.group("delta")
-            """
                 
             valueMatch = valueRe.match(rawValue)
             value = valueMatch.group(1)            
@@ -55,7 +38,7 @@ with open(sys.argv[1]) as f:
             data[statFullName]['abs'].append(float(value))
             
             # Handle delta value if present
-            if match.lastindex > 3 and match.group("delta"):
+            if match.group("delta"):                
                 rawValue = match.group("delta")
                 
                 valueMatch = valueRe.match(rawValue)
