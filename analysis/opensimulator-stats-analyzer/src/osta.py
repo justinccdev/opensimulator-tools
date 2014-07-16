@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import argparse
+import fnmatch
 import pprint
 import re
 import sys
@@ -14,9 +16,19 @@ def parseValue(rawValue, valueRe):
 ############
 ### MAIN ###
 ############
-if len(sys.argv) <= 1:
-    print "Usage: %s <stats-log-path>"
-    sys.exit(1)
+parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter)
+
+parser.add_argument(
+    '--select', 
+    help = "Select a subset of stats by their fullname using a glob pattern.  E.g. \"*Threads\" will only select stats ending in \"Threads\"", 
+    default = argparse.SUPPRESS)
+
+parser.add_argument(
+    'statsLogPath', 
+    help = "Path to the stats log file.", 
+    metavar = "stats-log-path")
+
+opts = parser.parse_args()
 
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
 #lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[\d\.-]+)(?: (?:\D+))?(?P<delta>[\d\.-]+)?")
@@ -33,7 +45,7 @@ valueRe = re.compile("([^ %/]+)(.*)")
 # delta may not be present
 data = {}
 
-with open(sys.argv[1]) as f:
+with open(opts.statsLogPath) as f:
     for line in f:    
         match = lineRe.match(line)
         
@@ -87,7 +99,10 @@ longestKey = max(fullNames, key = len)
     
 for category, containers in sorted(data.items()):
     for container, stats in sorted(containers.items()):
-        for statName, stat in sorted(stats.items()):    
+        for statName, stat in sorted(stats.items()):
+            if 'select' in opts and not fnmatch.fnmatch(stat['fullName'], opts.select):
+                continue    
+            
             absValues = stat['abs']['values']    
             sys.stdout.write(
                 "%-*s: %s to %s%s" % (
