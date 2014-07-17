@@ -45,6 +45,17 @@ class OSimStatsCorpus:
         else: 
             return None
         
+    def getStats(self, glob):
+        matchingStats = []
+        
+        for category, containers in self._data.items():
+            for container, stats in containers.items():
+                for statName, stat in stats.items():        
+                    if fnmatch.fnmatch(stat['fullName'], glob):
+                        matchingStats.append(stat)
+                        
+        return matchingStats
+        
     """Clear out any existing dataset."""
     def clear(self):
         self._data = {}

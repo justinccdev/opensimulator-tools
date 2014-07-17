@@ -2,6 +2,7 @@
 
 import argparse
 import matplotlib.pyplot as plt
+import sys
 from pylab import *
 from osta.osta import *
 
@@ -22,24 +23,30 @@ parser.add_argument(
 parser.add_argument(
     'statsLogPath', 
     help = "Path to the stats log file.", 
-    metavar = "stats-log-path")
+    metavar = "stats-log-path",
+    nargs='*')
 
 opts = parser.parse_args()
 
 corpus = OSimStatsCorpus()
-corpus.parse(opts.statsLogPath)
 
-stat = corpus.getStat(opts.select)
+for path in opts.statsLogPath:
+    corpus.parse(path)
 
-if not stat == None: 
-    plt.plot(stat['abs']['values'])
-    plt.title(stat['fullName'])
-    plt.xlabel("samples")
-    plt.ylabel(stat['name'])
+stats = corpus.getStats(opts.select)
+
+if len(stats) <= 0:
+    print "No stats matching %s" % (opts.select)
+    sys.exit(1)
+
+plt.title(opts.select)
+plt.ylabel(stats[0]['name'])
+
+for stat in stats: 
+    plt.plot(stat['abs']['values'])    
+    plt.xlabel("samples")        
     
-    if 'out' in opts:
-        savefig(opts.out)
-    else:
-        plt.show()
+if 'out' in opts:
+    savefig(opts.out)
 else:
-    print "No such stat as %s" % (opts.select)  
+    plt.show()      

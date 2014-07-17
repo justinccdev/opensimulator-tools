@@ -12,8 +12,7 @@ individual READMEs
 
 ## analysis ##
 
-Tools for analysing OpenSimulator or related data files and for extracting
-relevant system information.
+Tools for analysing OpenSimulator or related data files.
 
 ## commands ##
 
