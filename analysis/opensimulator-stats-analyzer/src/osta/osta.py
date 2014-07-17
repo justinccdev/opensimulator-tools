@@ -20,19 +20,28 @@ class OSimStatsHelper:
             'fullName' : ".".join((stats[1]['category'], "Total", stats[1]['name']))
         }
                                         
+        totalStat['abs']['values'] = OSimStatsHelper.sumStatsToValues(stats, 'abs')
+        
+        if 'delta' in stats[1]:
+            totalStat['delta'] = { 'units' : stats[1]['delta']['units'] }
+            totalStat['delta']['values'] = OSimStatsHelper.sumStatsToValues(stats, 'delta')
+            
+        return totalStat
+    
+    @staticmethod
+    def sumStatsToValues(stats, type):
         totals = []
         for stat in stats:
-            absValues = stat['abs']['values']
+            values = stat[type]['values']
             
-            for i in range(0, len(absValues)):
+            for i in range(0, len(values)):
                 if i + 1 > len(totals):
-                    totals.append(absValues[i])
+                    totals.append(values[i])
                 else:
-                    totals[i] += absValues[i]
+                    totals[i] += values[i]
                     
-        totalStat['abs']['values'] = totals
+        return totals                                    
         
-        return totalStat
 
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
 #lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[\d\.-]+)(?: (?:\D+))?(?P<delta>[\d\.-]+)?")

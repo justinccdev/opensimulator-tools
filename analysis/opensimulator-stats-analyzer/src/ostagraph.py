@@ -9,13 +9,13 @@ from osta.osta import *
 #################
 ### FUNCTIONS ###
 #################
-def plotNoneAction(stats):
+def plotNoneAction(stats, type):
     for stat in stats:
-        plt.plot(stat['abs']['values'], label=stat['container'])
+        plt.plot(stat[type]['values'], label=stat['container'])
         
-def plotSumAction(stats):
+def plotSumAction(stats, type):
     totalsStat = OSimStatsHelper.sumStats(stats)                
-    plt.plot(totalsStat['abs']['values'], label=totalsStat['container'])    
+    plt.plot(totalsStat[type]['values'], label=totalsStat['container'])    
 
 ############
 ### MAIN ###
@@ -27,9 +27,14 @@ parser.add_argument(
     help = "Select the full name of a stat to graph (e.g. \"scene.Keynote 1.RootAgents\")")
 
 parser.add_argument(
+    '--type', 
+    help = "Type of value to graph.  Either 'abs' or 'delta'.  Default is 'abs'",
+    default = 'abs')
+
+parser.add_argument(
     '--action',
     help = "Perform an action on the stat or stats.  Only current action is none or sum.  Default is none.",
-    default = "none")
+    default = 'none')
 
 parser.add_argument(
     '--out',
@@ -42,34 +47,34 @@ parser.add_argument(
     metavar = "stats-log-path",
     nargs='*')
 
-opts = parser.parse_args()
+opt = parser.parse_args()
 
 corpus = OSimStatsCorpus()
 
-for path in opts.statsLogPath:
+for path in opt.statsLogPath:
     corpus.parse(path)
 
-stats = corpus.getStats(opts.select)
+stats = corpus.getStats(opt.select)
 
 if len(stats) <= 0:
-    print "No stats matching %s" % (opts.select)
+    print "No stats matching %s" % (opt.select)
     sys.exit(1)
 
 # Used to fetch data that will be the same for all stats
 oneStat = stats[stats.keys()[0]]
 
-plt.title(opts.select)
+plt.title(opt.select)
 plt.ylabel(oneStat['name'])
 plt.xlabel("samples")
 
-if opts.action == 'sum':    
-    plotSumAction(stats.values())
+if opt.action == 'sum':    
+    plotSumAction(stats.values(), opt.type)
 else:
-    plotNoneAction(stats.values())
+    plotNoneAction(stats.values(), opt.type)
     
 plt.legend()        
     
-if 'out' in opts:
-    savefig(opts.out)
+if 'out' in opt:
+    savefig(opt.out)
 else:
     plt.show()      
