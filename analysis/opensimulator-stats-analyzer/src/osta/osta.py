@@ -1,4 +1,5 @@
 import argparse
+import collections
 import fnmatch
 import pprint
 import re
@@ -45,14 +46,18 @@ class OSimStatsCorpus:
         else: 
             return None
         
+    """
+    Returns a dictionary of matching stats where fullName => stat
+    If no match stats are found then an empty dictionary is returned.
+    """        
     def getStats(self, glob):
-        matchingStats = []
+        matchingStats = collections.OrderedDict()
         
         for category, containers in self._data.items():
             for container, stats in containers.items():
                 for statName, stat in stats.items():        
                     if fnmatch.fnmatch(stat['fullName'], glob):
-                        matchingStats.append(stat)
+                        matchingStats[stat['fullName']] = stat
                         
         return matchingStats
         
@@ -69,6 +74,10 @@ class OSimStatsCorpus:
         #        stat : {
         #            'abs'   : { 'values' : [], 'units' : "" },
         #            'delta' : { 'values' : [], 'units' : "" }
+        #            'name' : string
+        #            'fullName' : string
+        #            'category' : string
+        #            'container' : string
         # }  
         # delta may not be present
                          
@@ -87,14 +96,16 @@ class OSimStatsCorpus:
                     value = OSimStatsCorpus.parseValue(rawValue, valueRe)
                     
                     if not category in self._data:
-                        self._data[category] = {}
+                        self._data[category] = collections.OrderedDict()
                         
                     if not container in self._data[category]:
-                        self._data[category][container] = {}
+                        self._data[category][container] = collections.OrderedDict()
                     
                     if not name in self._data[category][container]:
                         entry = { 
                             'abs' : { 'values' : [], 'units' : value[1] },
+                            'category' : category,
+                            'container' : container,                            
                             'fullName' : statFullName,
                             'name' : name
                         }

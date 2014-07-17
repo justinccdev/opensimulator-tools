@@ -40,11 +40,15 @@ if len(stats) <= 0:
     sys.exit(1)
 
 plt.title(opts.select)
-plt.ylabel(stats[0]['name'])
 
-for stat in stats: 
-    plt.plot(stat['abs']['values'])    
-    plt.xlabel("samples")        
+# Arbitrarily use the first stat for this
+plt.ylabel(stats[stats.keys()[0]]['name'])
+
+for stat in stats.values():
+    plt.plot(stat['abs']['values'], label=stat['container'])    
+    plt.xlabel("samples")
+    
+plt.legend()        
     
 if 'out' in opts:
     savefig(opts.out)
