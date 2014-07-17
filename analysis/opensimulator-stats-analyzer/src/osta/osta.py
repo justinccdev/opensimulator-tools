@@ -5,15 +5,33 @@ import pprint
 import re
 import sys
 
+#######################
+### OSimStatsHelper ###
+#######################
+class OSimStatsHelper:
+    @staticmethod
+    def sumStats(stats):
+        totals = []
+        for stat in stats.values():
+            absValues = stat['abs']['values']
+            
+            for i in range(0, len(absValues)):
+                if i + 1 > len(totals):
+                    totals.append(absValues[i])
+                else:
+                    totals[i] += absValues[i]
+                    
+        return totals
+
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
 #lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[\d\.-]+)(?: (?:\D+))?(?P<delta>[\d\.-]+)?")
 lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[^,]+)(?:, )?(?P<delta>[^,]+)?")
 statsReportStartRe = re.compile(" - \*\*\* STATS REPORT AT")
 valueRe = re.compile("([^ %/]+)(.*)")
 
-############
-### Osta ###
-############
+#######################
+### OSimStatsCorpus ###
+#######################
 class OSimStatsCorpus:
         
     _data = {}    
@@ -45,12 +63,17 @@ class OSimStatsCorpus:
             return self._data[category][container][name]     
         else: 
             return None
-        
+    
     """
-    Returns a dictionary of matching stats where fullName => stat
-    If no match stats are found then an empty dictionary is returned.
+    Returns a dictionary of stats where fullName => stat.
+    If glob is specified then this is used to match stats using their full name
+    If no stats are found then an empty dictionary is returned.
     """        
-    def getStats(self, glob):
+    def getStats(self, glob = "*"):
+        # FIXME: Doing far more work than necessary here if we simply want all stats without matching.
+        if glob == None:
+            glob = "*"
+            
         matchingStats = collections.OrderedDict()
         
         for category, containers in self._data.items():
