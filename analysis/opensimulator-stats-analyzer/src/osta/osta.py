@@ -9,10 +9,19 @@ import sys
 ### OSimStatsHelper ###
 #######################
 class OSimStatsHelper:
+    """Takes a list of stats and returns a stat containing their summation by each sample."""
     @staticmethod
     def sumStats(stats):
+        totalStat = { 
+            'abs' : { 'units' : stats[1]['abs']['units'] },
+            'category' : stats[1]['category'],
+            'container' : "Total",
+            'name' : stats[1]['name'],
+            'fullName' : ".".join((stats[1]['category'], "Total", stats[1]['name']))
+        }
+                                        
         totals = []
-        for stat in stats.values():
+        for stat in stats:
             absValues = stat['abs']['values']
             
             for i in range(0, len(absValues)):
@@ -21,7 +30,9 @@ class OSimStatsHelper:
                 else:
                     totals[i] += absValues[i]
                     
-        return totals
+        totalStat['abs']['values'] = totals
+        
+        return totalStat
 
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
 #lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[\d\.-]+)(?: (?:\D+))?(?P<delta>[\d\.-]+)?")

@@ -10,12 +10,12 @@ from osta.osta import *
 ### FUNCTIONS ###
 #################
 def plotNoneAction(stats):
-    for stat in stats.values():
+    for stat in stats:
         plt.plot(stat['abs']['values'], label=stat['container'])
         
 def plotSumAction(stats):
-    totals = OSimStatsHelper.sumStats(stats)                
-    plt.plot(totals, label="Total")    
+    totalsStat = OSimStatsHelper.sumStats(stats)                
+    plt.plot(totalsStat['abs']['values'], label=totalsStat['container'])    
 
 ############
 ### MAIN ###
@@ -63,9 +63,9 @@ plt.ylabel(oneStat['name'])
 plt.xlabel("samples")
 
 if opts.action == 'sum':    
-    plotSumAction(stats)
+    plotSumAction(stats.values())
 else:
-    plotNoneAction(stats)
+    plotNoneAction(stats.values())
     
 plt.legend()        
     

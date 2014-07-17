@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter
 parser.add_argument(
     '--select', 
     help = "Select a subset of stats by their fullname using a glob pattern.  E.g. \"*Threads\" will only select stats ending in \"Threads\"", 
-    default = argparse.SUPPRESS)
+    default = "*")
 
 parser.add_argument(
     '--action',
@@ -27,14 +27,22 @@ parser.add_argument(
     metavar = "stats-log-path",
     nargs='*')
 
-opts = parser.parse_args()
+opt = parser.parse_args()
 
 corpus = OSimStatsCorpus()
 
-for path in opts.statsLogPath:
+for path in opt.statsLogPath:
     corpus.parse(path)            
             
-stats = corpus.getStats()
+stats = corpus.getStats(opt.select)
+
+if len(stats) <= 0:
+    print "No stats matching %s" % (opts.select)
+    sys.exit(1)
+
+if opt.action == "sum":
+    totalStat = OSimStatsHelper.sumStats(stats.values())
+    stats = { totalStat['fullName'] : totalStat }
                    
 longestKey = max(stats, key = len)
 
@@ -43,7 +51,7 @@ for stat in stats.values():
     sys.stdout.write(
         "%-*s: %s to %s%s" % (
             len(longestKey), stat['fullName'], min(absValues), max(absValues), stat['abs']['units']))    
-    
+
     if 'delta' in stat:
         deltaValues = stat['delta']['values']
         print ", %s to %s%s" % (min(deltaValues), max(deltaValues), stat['delta']['units'])
