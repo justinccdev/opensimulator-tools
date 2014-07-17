@@ -13,16 +13,16 @@ class OSimStatsHelper:
     @staticmethod
     def sumStats(stats):
         totalStat = { 
-            'abs' : { 'units' : stats[1]['abs']['units'] },
-            'category' : stats[1]['category'],
+            'abs' : { 'units' : stats[0]['abs']['units'] },
+            'category' : stats[0]['category'],
             'container' : "Total",
-            'name' : stats[1]['name'],
-            'fullName' : ".".join((stats[1]['category'], "Total", stats[1]['name']))
+            'name' : stats[0]['name'],
+            'fullName' : ".".join((stats[0]['category'], "Total", stats[0]['name']))
         }
                                         
         totalStat['abs']['values'] = OSimStatsHelper.sumStatsToValues(stats, 'abs')
         
-        if 'delta' in stats[1]:
+        if 'delta' in stats[0]:
             totalStat['delta'] = { 'units' : stats[1]['delta']['units'] }
             totalStat['delta']['values'] = OSimStatsHelper.sumStatsToValues(stats, 'delta')
             
