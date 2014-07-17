@@ -12,6 +12,19 @@ from osta.osta import *
 def plotNoneAction(stats):
     for stat in stats.values():
         plt.plot(stat['abs']['values'], label=stat['container'])
+        
+def plotSumAction(stats):
+    totals = []
+    for stat in stats.values():
+        absValues = stat['abs']['values']
+        
+        for i in range(0, len(absValues)):
+            if i + 1 > len(totals):
+                totals.append(absValues[i])
+            else:
+                totals[i] += absValues[i]
+                
+    plt.plot(totals, label="Total")    
 
 ############
 ### MAIN ###
@@ -59,17 +72,7 @@ plt.ylabel(oneStat['name'])
 plt.xlabel("samples")
 
 if opts.action == 'sum':    
-    totals = []
-    for stat in stats.values():
-        absValues = stat['abs']['values']
-        
-        for i in range(0, len(absValues)):
-            if i + 1 > len(totals):
-                totals.append(absValues[i])
-            else:
-                totals[i] += absValues[i]
-                
-    plt.plot(totals, label="Total")
+    plotSumAction(stats)
 else:
     plotNoneAction(stats)
     
