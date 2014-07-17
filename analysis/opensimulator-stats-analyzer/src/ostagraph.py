@@ -64,7 +64,7 @@ if len(stats) <= 0:
 oneStat = stats[stats.keys()[0]]
 
 plt.title(opt.select)
-plt.ylabel(oneStat['name'])
+plt.ylabel(oneStat[opt.type]['units'])
 plt.xlabel("samples")
 
 if opt.action == 'sum':    
