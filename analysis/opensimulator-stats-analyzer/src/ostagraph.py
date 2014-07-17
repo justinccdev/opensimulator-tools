@@ -6,6 +6,13 @@ import sys
 from pylab import *
 from osta.osta import *
 
+#################
+### FUNCTIONS ###
+#################
+def plotNoneAction(stats):
+    for stat in stats.values():
+        plt.plot(stat['abs']['values'], label=stat['container'])
+
 ############
 ### MAIN ###
 ############
@@ -14,6 +21,11 @@ parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter
 parser.add_argument(
     '--select', 
     help = "Select the full name of a stat to graph (e.g. \"scene.Keynote 1.RootAgents\")")
+
+parser.add_argument(
+    '--action',
+    help = "Perform an action on the stat or stats.  Only current action is none or sum.  Default is none.",
+    default = "none")
 
 parser.add_argument(
     '--out',
@@ -39,14 +51,27 @@ if len(stats) <= 0:
     print "No stats matching %s" % (opts.select)
     sys.exit(1)
 
+# Used to fetch data that will be the same for all stats
+oneStat = stats[stats.keys()[0]]
+
 plt.title(opts.select)
+plt.ylabel(oneStat['name'])
+plt.xlabel("samples")
 
-# Arbitrarily use the first stat for this
-plt.ylabel(stats[stats.keys()[0]]['name'])
-
-for stat in stats.values():
-    plt.plot(stat['abs']['values'], label=stat['container'])    
-    plt.xlabel("samples")
+if opts.action == 'sum':    
+    totals = []
+    for stat in stats.values():
+        absValues = stat['abs']['values']
+        
+        for i in range(0, len(absValues)):
+            if i + 1 > len(totals):
+                totals.append(absValues[i])
+            else:
+                totals[i] += absValues[i]
+                
+    plt.plot(totals, label="Total")
+else:
+    plotNoneAction(stats)
     
 plt.legend()        
     
