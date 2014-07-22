@@ -24,7 +24,8 @@ parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter
 
 parser.add_argument(
     '--select', 
-    help = "Select the full name of a stat to graph (e.g. \"scene.Keynote 1.RootAgents\")")
+    help = "Select the full name of a stat to graph (e.g. \"scene.Keynote 1.RootAgents\")",
+    required = True)
 
 parser.add_argument(
     '--type', 
