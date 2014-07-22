@@ -25,7 +25,7 @@ parser.add_argument(
     'statsLogPath', 
     help = "Path to the stats log file.", 
     metavar = "stats-log-path",
-    nargs='*')
+    nargs='+')
 
 opt = parser.parse_args()
 
