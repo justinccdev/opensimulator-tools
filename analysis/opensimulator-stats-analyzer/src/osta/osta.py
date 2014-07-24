@@ -71,9 +71,9 @@ class OSimStatsCorpus:
     def parseValue(rawValue, valueRe):
         valueMatch = valueRe.match(rawValue)
         return float(valueMatch.group(1)), valueMatch.group(2)
-    
-    """Get a statistic given its full name."""
+        
     def getStat(self, statFullName):
+        """Get a statistic given its full name."""
         if self._data == None:
             return None
         
@@ -83,13 +83,13 @@ class OSimStatsCorpus:
             return self._data[category][container][name]     
         else: 
             return None
-    
-    """
-    Returns a dictionary of stats where fullName => stat.
-    If glob is specified then this is used to match stats using their full name
-    If no stats are found then an empty dictionary is returned.
-    """        
+           
     def getStats(self, glob = "*"):
+        """
+        Returns a dictionary of stats where fullName => stat.
+        If glob is specified then this is used to match stats using their full name
+        If no stats are found then an empty dictionary is returned.
+        """         
         # FIXME: Doing far more work than necessary here if we simply want all stats without matching.
         if glob == None:
             glob = "*"
@@ -103,14 +103,14 @@ class OSimStatsCorpus:
                         matchingStats[stat['fullName']] = stat
                         
         return matchingStats
-        
-    """Clear out any existing dataset."""
+            
     def clear(self):
+        """Clear out any existing dataset."""
         self._data = {}
         self._samplesCount = 0
     
-    """Parse OpenSimulator stats log data from the given path and merge into any existing data."""    
-    def parse(self, path):        
+    def parse(self, path):
+        """Parse OpenSimulator stats log data from the given path and merge into any existing data."""        
         # Structure
         # category : { 
         #    container : { 
