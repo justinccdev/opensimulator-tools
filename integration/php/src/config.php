@@ -4,6 +4,7 @@
 // sits at the root of the install
 $IP = dirname(__FILE__);
 
+$GRID_SERVICE_URI = "http://localhost:8003/grid";
 $USER_ACCOUNTS_SERVICE_URI = "http://localhost:8003/accounts";
 $PRESENCE_SERVICE_URI = "http://localhost:8003/presence";
 $AVATAR_SERVICE_URI = "http://localhost:8003/avatar";
