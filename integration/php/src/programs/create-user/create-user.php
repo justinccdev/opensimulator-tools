@@ -24,6 +24,7 @@ try
 catch (Exception $e)
 {
     $parser->displayError($e->getMessage());
+    exit(1);
 }
 
 $firstName = $params->args['firstName'];
