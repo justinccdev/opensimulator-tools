@@ -20,7 +20,7 @@ function CreateAssetXml($data, $id, $name, $description, $type)
 
 function AddAsset($serviceUri, $assetXml, $debug = FALSE)
 {
-    PostToService($serviceUri, $assetXml, $debug);
+    return PostToService($serviceUri, $assetXml, $debug);
 }
 
 function GetAsset($serviceUri, $assetId, $debug = FALSE)

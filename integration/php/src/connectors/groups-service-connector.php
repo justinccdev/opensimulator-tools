@@ -11,7 +11,7 @@ function FindGroups($serviceUri, $query, $debug = FALSE)
             'Query' => $query,
             'METHOD' => 'FINDGROUPS');
 
-    $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
+    return PostToService($serviceUri, http_build_query($params), $debug);
 }
 
 function GetGroup($serviceUri, $groupUuid = NULL, $groupName = NULL, $debug = FALSE)
@@ -31,7 +31,7 @@ function GetGroup($serviceUri, $groupUuid = NULL, $groupName = NULL, $debug = FA
     else
         $params['Name'] = $groupName;
 
-    $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
+    return PostToService($serviceUri, http_build_query($params), $debug);
 }
 
 function GetGroupMembers($serviceUri, $groupUuid, $debug = FALSE)
@@ -42,7 +42,7 @@ function GetGroupMembers($serviceUri, $groupUuid, $debug = FALSE)
             'GroupID' => $groupUuid,
             'METHOD' => 'GETGROUPMEMBERS');
 
-    $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
+    return PostToService($serviceUri, http_build_query($params), $debug);
 }
 
 function GetUserMemberships($serviceUri, $userUuid, $groupUuid, $debug = FALSE)
@@ -60,7 +60,7 @@ function GetUserMemberships($serviceUri, $userUuid, $groupUuid, $debug = FALSE)
     else
         $params['GroupID'] = $groupUuid;
 
-    $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
+    return PostToService($serviceUri, http_build_query($params), $debug);
 }
 
 ?>
