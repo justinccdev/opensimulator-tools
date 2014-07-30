@@ -14,6 +14,17 @@ function GetRegionFlags($serviceUri, $regionId, $debug = FALSE)
     return PostToService($serviceUri, http_build_query($params), $debug);            
 }
 
+function GetRegionByUuid($serviceUri, $regionId, $debug = FALSE)
+{
+    $params 
+        = array(
+            'SCOPEID' => UUID_ZERO,
+            'REGIONID' => $regionId,
+            'METHOD' => "get_region_by_uuid");   
+            
+    return PostToService($serviceUri, http_build_query($params), $debug);
+}
+
 function GetRegionRange($serviceUri, $minX, $minY, $maxX, $maxY, $debug = FALSE)
 {
     $params 
