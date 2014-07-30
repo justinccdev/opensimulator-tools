@@ -14,6 +14,26 @@ function FindGroups($serviceUri, $query, $debug = FALSE)
     $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
 }
 
+function GetGroup($serviceUri, $groupUuid = NULL, $groupName = NULL, $debug = FALSE)
+{
+    if ($groupUuid != NULL && $groupName != NULL)
+        throw new Exception("Cannot specify both group ID and name.");
+    else if ($groupUuid == NULL && $groupName == NULL)
+        throw new Exception("Either group ID or group name must be specified.");            
+    
+    $params
+        = array(
+            'RequestingAgentID' => UUID_ZERO,            
+            'METHOD' => 'GETGROUP');
+            
+    if ($groupUuid != NULL)
+        $params['GroupID'] =  $groupUuid;
+    else
+        $params['Name'] = $groupName;
+
+    $responseXml = PostToService($serviceUri, http_build_query($params), $debug);
+}
+
 function GetGroupMembers($serviceUri, $groupUuid, $debug = FALSE)
 {
     $params
