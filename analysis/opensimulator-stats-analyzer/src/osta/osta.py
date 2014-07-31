@@ -22,7 +22,7 @@ class OSimStatsHelper:
                                         
         totalStat['abs']['values'] = OSimStatsHelper.sumStatsToValues(stats, 'abs')
         
-        print "Summing %s" % (totalStat['name'])
+        #print "Summing %s" % (totalStat['name'])
         if 'delta' in stats[0]:
             totalStat['delta'] = { 'units' : stats[0]['delta']['units'] }
             totalStat['delta']['values'] = OSimStatsHelper.sumStatsToValues(stats, 'delta')
