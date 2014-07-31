@@ -22,6 +22,7 @@ class OSimStatsHelper:
                                         
         totalStat['abs']['values'] = OSimStatsHelper.sumStatsToValues(stats, 'abs')
         
+        print "Summing %s" % (totalStat['name'])
         if 'delta' in stats[0]:
             totalStat['delta'] = { 'units' : stats[0]['delta']['units'] }
             totalStat['delta']['values'] = OSimStatsHelper.sumStatsToValues(stats, 'delta')
@@ -40,13 +41,18 @@ class OSimStatsHelper:
                 else:
                     totals[i] += values[i]
                     
-        return totals                                    
+        return totals     
+    
+    @staticmethod
+    def splitStatsFullName(fullName):
+        return statNamePartsRe.match(fullName).groups();                               
         
 
 #lineRe = re.compile("(.* .*) - (.*) : (\d+)[ ,]([^:]*)")
 #lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[\d\.-]+)(?: (?:\D+))?(?P<delta>[\d\.-]+)?")
 lineRe = re.compile("(.* .*) - (.*) : (?P<abs>[^,]+)(?:, )?(?P<delta>[^,]+)?")
 statsReportStartRe = re.compile(" - \*\*\* STATS REPORT AT")
+statNamePartsRe = re.compile("^(.*?)\.(.*)\.(.*?)$");
 valueRe = re.compile("([^ %/]+)(.*)")
 
 #######################
@@ -77,7 +83,7 @@ class OSimStatsCorpus:
         if self._data == None:
             return None
         
-        (category, container, name) = statFullName.split(".")
+        (category, container, name) = OSimStatsHelper.splitStatsFullName(statFullName);
         
         if category in self._data and container in self._data[category] and name in self._data[category][container]:
             return self._data[category][container][name]     
@@ -130,7 +136,9 @@ class OSimStatsCorpus:
                 
                 if match != None:
                     statFullName = match.group(2)
-                    (category, container, name) = statFullName.split(".")       
+                    
+                    #(category, container, name) = statFullName.split(".")       
+                    (category, container, name) = OSimStatsHelper.splitStatsFullName(statFullName);
                     
                     rawValue = match.group("abs")
                     #print match.lastindex
