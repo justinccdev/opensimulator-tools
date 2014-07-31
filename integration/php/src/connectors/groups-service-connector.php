@@ -71,7 +71,7 @@ function GetUserMemberships($serviceUri, $userUuid, $groupUuid, $debug = FALSE)
  * @param string $groupName
  *      Name of the group.  Ignored if the group already exists.
  * @param UUID $founderID 
- *      UUID of the user account of the founder of the group.  Ignored if the group already exists.*  
+ *      UUID of the user account of the founder of the group.
  * @param string $charter
  *      Charter information (description) for the group.
  * @param UUID $insigniaID
