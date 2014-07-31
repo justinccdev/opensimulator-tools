@@ -68,10 +68,6 @@ function GetUserMemberships($serviceUri, $userUuid, $groupUuid, $debug = FALSE)
  * 
  * @param string $serviceURI 
  *      Inventory service URI
- * @param UUID $groupID 
- *      UUID of this group.  
- *      If it doesn't already exist then a new group is created.  
- *      If it already exists then the group with that UUID is updated.
  * @param string $groupName
  *      Name of the group.  Ignored if the group already exists.
  * @param UUID $founderID 
@@ -97,7 +93,7 @@ function GetUserMemberships($serviceUri, $userUuid, $groupUuid, $debug = FALSE)
  * @return SimpleXmlElement folder XML element 
  */
 function AddGroup(
-    $serviceUri, $groupID, $groupName, $founderID, $charter, $groupPictureID, 
+    $serviceUri, $groupName, $founderID, $charter, $groupPictureID, 
     $allowPublish, $maturePublish, $openEnrollment, $membershipFee, $shownInList = TRUE,
     $debug = FALSE)
 {
@@ -106,9 +102,6 @@ function AddGroup(
     
     if (!IsUuid($founderID))
         throw new InvalidArgumentException("founderID '$founderID' is not a valid UUID");
-        
-    if (!IsUuid($groupID))
-        throw new InvalidArgumentException("groupID '$groupID' is not a valid UUID");
     
     if (!IsUuid($groupPictureID))
         throw new InvalidArgumentException("groupPictureID '$groupPictureID' is not a valid UUID");
@@ -125,7 +118,6 @@ function AddGroup(
     $params
         = array(
             'RequestingAgentID' => UUID_ZERO,
-            'GroupID' => $groupID,
             'GroupName' => $groupName,
             'AllowPublish' => $allowPublish ? "true" : "false",
             'MaturePublish' => $maturePublish ? "true" : "false",
@@ -143,6 +135,5 @@ function AddGroup(
             
     $responseXml = PostToService($serviceUri, http_build_query($params), $debug);    
 }
-
 
 ?>

@@ -11,7 +11,6 @@ require_once "$IP/connectors/groups-service-connector.php";
 
 $parser = new Console_CommandLine();
 
-$parser->addArgument('groupID');
 $parser->addArgument('groupName');
 $parser->addArgument('founderID');
 $parser->addArgument('charter');
@@ -28,11 +27,10 @@ catch (Exception $e)
     exit(1);
 }
 
-$groupId = $params->args['groupID'];
 $groupName = $params->args['groupName'];
 $founderId = $params->args['founderID'];
 $charter = $params->args['charter'];
 $groupPictureID = $params->args['groupPictureID'];
 $openEnrollment = $params->args['openEnrollment'];
 
-AddGroup($GROUPS_SERVICE_URI, $groupId, $groupName, $founderId, $charter, $groupPictureID, TRUE, TRUE, TRUE, 0, TRUE, TRUE);
+AddGroup($GROUPS_SERVICE_URI, $groupName, $founderId, $charter, $groupPictureID, TRUE, TRUE, TRUE, 0, TRUE, TRUE);
