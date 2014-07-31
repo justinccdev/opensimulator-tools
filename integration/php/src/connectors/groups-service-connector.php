@@ -138,7 +138,7 @@ function AddGroup(
             'METHOD' => 'PUTGROUP',
             'OP' => 'ADD');
             
-    $responseXml = PostToService($serviceUri, http_build_query($params), $debug);    
+    return PostToService($serviceUri, http_build_query($params), $debug);    
 }
 
 function AddUserToGroup($serviceUri, $groupId, $userId, $roleId, $debug = FALSE)
@@ -233,7 +233,7 @@ function UpdateGroup(
             'METHOD' => 'PUTGROUP',
             'OP' => 'UPDATE');
             
-    $responseXml = PostToService($serviceUri, http_build_query($params), $debug);    
+    return PostToService($serviceUri, http_build_query($params), $debug);    
 }
 
 ?>
