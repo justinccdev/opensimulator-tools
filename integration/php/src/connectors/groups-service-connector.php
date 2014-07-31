@@ -158,6 +158,22 @@ function AddUserToGroup($serviceUri, $groupId, $userId, $roleId, $debug = FALSE)
     return PostToService($serviceUri, http_build_query($params), $debug);                             
 }
 
+function RemoveUserFromGroup($serviceUri, $groupId, $requestingUserId, $userId, $debug = FALSE)
+{                    
+    CheckUuid("groupId", $groupId);
+    CheckUuid("requestingUserId", $requestingUserId);
+    CheckUuid("userId", $userId);
+                  
+    $params
+        = array(
+            'RequestingAgentID' => UUID_ZERO,
+            'GroupID' => $groupId,
+            'AgentID' => $userId,
+            'METHOD' => 'REMOVEAGENTFROMGROUP');
+            
+    return PostToService($serviceUri, http_build_query($params), $debug);                             
+}
+
 /*
  * Add a new group.
  * 
