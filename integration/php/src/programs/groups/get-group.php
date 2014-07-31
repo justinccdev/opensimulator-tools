@@ -30,8 +30,6 @@ $groupName = NULL;
 # For the purposes of this example program, we will assume that if the argument is a UUID then we always intend to 
 # use it as a UUID in the query.
 if (IsUuid($group))
-    $groupId = $group;
+    GetGroupById($GROUPS_SERVICE_URI, $group, TRUE);
 else
-    $groupName = $group;
-
-GetGroup($GROUPS_SERVICE_URI, $groupId, $groupName, TRUE);
+    GetGroupByName($GROUPS_SERVICE_URI, $group, TRUE);
