@@ -26,6 +26,25 @@ function IsUuid($data)
     return preg_match('/^[a-f\d]{8}-(?:[a-f\d]{4}-){3}[a-f\d]{12}$/i', $data);
 }
 
+function ToBool($var) 
+{
+    //echo "Got '$var' ", is_string($var), "\n";
+    if (!is_string($var)) 
+        return (bool) $var;
+    
+    switch (strtolower($var)) 
+    {        
+        case '1':
+        case 'true':
+        case 'on':
+        case 'yes':
+        case 'y':
+            return true;
+        default:
+            return false;
+    }
+}
+
 function GetPrettyXML($xml) 
 {
     $dom = new DOMDocument();

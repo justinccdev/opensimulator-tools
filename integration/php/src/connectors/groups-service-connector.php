@@ -171,12 +171,15 @@ function AddGroup(
  * @return SimpleXmlElement folder XML element 
  */
 function UpdateGroup(
-    $serviceUri, $groupID, $charter, $groupPictureID, 
+    $serviceUri, $groupID, $requestingUserId, $charter, $groupPictureID, 
     $allowPublish, $maturePublish, $openEnrollment, $membershipFee, $shownInList = TRUE,
     $debug = FALSE)
 {
     if (!IsUuid($groupID))
-        throw new InvalidArgumentException("allowPublish '$allowPublish' is not a bool");
+        throw new InvalidArgumentException("groupID '$groupID' is not a UUID");
+    
+    if (!IsUuid($requestingUserId))
+        throw new InvalidArgumentException("requestingUserId '$requestingUserId' is not a UUID");    
                            
     if (!is_bool($allowPublish))
         throw new InvalidArgumentException("allowPublish '$allowPublish' is not a bool");
@@ -185,7 +188,7 @@ function UpdateGroup(
         throw new InvalidArgumentException("maturePublish '$maturePublish' is not a bool");    
     
     if (!IsUuid($groupPictureID))
-        throw new InvalidArgumentException("groupPictureID '$groupPictureID' is not a valid UUID");
+        throw new InvalidArgumentException("groupPictureID '$groupPictureID' is not a UUID");
     
     if (!is_bool($openEnrollment))
         throw new InvalidArgumentException("openEnrollment '$openEnrollment' is not a bool");
@@ -198,7 +201,7 @@ function UpdateGroup(
     
     $params
         = array(
-            'RequestingAgentID' => UUID_ZERO,
+            'RequestingAgentID' => $requestingUserId,
             'GroupID' => $groupID,
             'AllowPublish' => $allowPublish ? "true" : "false",
             'MaturePublish' => $maturePublish ? "true" : "false",
@@ -215,7 +218,5 @@ function UpdateGroup(
             
     $responseXml = PostToService($serviceUri, http_build_query($params), $debug);    
 }
-
-
 
 ?>
