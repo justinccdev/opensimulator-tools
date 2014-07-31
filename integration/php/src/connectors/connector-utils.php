@@ -62,4 +62,10 @@ function PrintReturnDebugInfo($curlResult, $curlInfo)
     echo "Return code:" . $curlInfo['http_code'] . "\n";
     echo "Return data: (below)\n" . GetPrettyXML($curlResult) . "\n";    
 }
+
+function CheckUuid($varName, $value)
+{
+    if (!IsUuid($value))
+        throw new InvalidArgumentException("$varName '$value' is not a valid UUID");    
+}
 ?>

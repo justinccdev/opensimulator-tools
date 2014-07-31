@@ -24,12 +24,12 @@ catch (Exception $e)
     exit(1);
 }
 
-$groupId = $params->args['groupName'];
+$groupName = $params->args['groupName'];
 $charter = $params->args['charter'];
 
 // Unfortunately, due to current OpenSimulator limitations all data is set so we have to get first 
 // and feed back the fields we don't want to change!
-$existingGroupE = GetGroupByName($GROUPS_SERVICE_URI, $groupId)->RESULT;
+$existingGroupE = GetGroupByName($GROUPS_SERVICE_URI, $groupName)->RESULT;
 
 // The update change can only be performed by a user with sufficient permissions, which the founder should have.
 // Can't get around this at the moment, even though this should be a voluntary perms check for simulator purposes, 

@@ -141,6 +141,23 @@ function AddGroup(
     $responseXml = PostToService($serviceUri, http_build_query($params), $debug);    
 }
 
+function AddUserToGroup($serviceUri, $groupId, $userId, $roleId, $debug = FALSE)
+{
+    CheckUuid("groupId", $groupId);
+    CheckUuid("userId", $userId);
+    CheckUuid("roleId", $roleId); 
+                  
+    $params
+        = array(
+            'RequestingAgentID' => UUID_ZERO,
+            'GroupID' => $groupId,
+            'AgentID' => $userId,
+            'RoleID' => $roleId,
+            'METHOD' => 'ADDAGENTTOGROUP');
+            
+    return PostToService($serviceUri, http_build_query($params), $debug);                             
+}
+
 /*
  * Add a new group.
  * 
