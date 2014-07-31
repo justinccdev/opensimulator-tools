@@ -64,7 +64,7 @@ function GetUserMemberships($serviceUri, $userUuid, $groupUuid, $debug = FALSE)
 }
 
 /*
- * Add or update an existing group.
+ * Add a new group.
  * 
  * @param string $serviceURI 
  *      Inventory service URI
