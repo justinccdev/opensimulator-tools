@@ -37,7 +37,7 @@ for path in opt.statsLogPath:
 stats = corpus.getStats(opt.select)
 
 if len(stats) <= 0:
-    print "No stats matching %s" % (opts.select)
+    print "No stats matching %s" % (opt.select)
     sys.exit(1)
 
 if opt.action == "sum":
