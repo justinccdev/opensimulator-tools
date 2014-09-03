@@ -22,6 +22,6 @@ files to use in graph generation.
 
 # References #
 
-[OPENSIM-STATS-LOGS]
+[OPENSIM-STATS-LOGS] - http://opensimulator.org/wiki/Show_stats#stats_record
 
 vim: ts=4:sw=4:et:tw=120
