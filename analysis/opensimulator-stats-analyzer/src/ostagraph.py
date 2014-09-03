@@ -113,6 +113,10 @@ if "batch" in opt:
             outPath = os.path.join(opt.outdir, graph["out"])
             save = True
             show = False
+        else:
+            outPath = None
+            save = False
+            show = True
             
         produceGraph(select, type, action, show, save, outPath)            
                     
