@@ -134,7 +134,7 @@ class OSimStatsCorpus:
         # delta may not be present
                          
         with open(path) as f:
-            setName = os.path.basename(path)
+            setName = os.path.splitext(os.path.basename(path))[0]
             
             print "Loading set %s" % (setName)
             
