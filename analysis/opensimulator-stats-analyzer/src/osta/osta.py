@@ -1,6 +1,7 @@
 import argparse
 import collections
 import fnmatch
+import os.path
 import pprint
 import re
 import sys
@@ -85,10 +86,11 @@ class OSimStatsCorpus:
         
         (category, container, name) = OSimStatsHelper.splitStatsFullName(statFullName);
         
-        if category in self._data and container in self._data[category] and name in self._data[category][container]:
-            return self._data[category][container][name]     
-        else: 
-            return None
+        for set in self._data.items():                    
+            if category in set and container in set[category] and name in set[category][container]:
+                return set[category][container][name]     
+            else: 
+                return None
            
     def getStats(self, glob = "*"):
         """
@@ -102,11 +104,12 @@ class OSimStatsCorpus:
             
         matchingStats = collections.OrderedDict()
         
-        for category, containers in self._data.items():
-            for container, stats in containers.items():
-                for statName, stat in stats.items():        
-                    if fnmatch.fnmatch(stat['fullName'], glob):
-                        matchingStats[stat['fullName']] = stat
+        for set in self._data.values():
+            for category, containers in set.items():
+                for container, stats in containers.items():
+                    for statName, stat in stats.items():        
+                        if fnmatch.fnmatch(stat['fullName'], glob):
+                            matchingStats[stat['fullName']] = stat
                         
         return matchingStats
             
@@ -117,7 +120,7 @@ class OSimStatsCorpus:
     
     def load(self, path):
         """Load OpenSimulator stats log data from the given path and merge into any existing data."""        
-        # Structure
+        # Set structure
         # category : { 
         #    container : { 
         #        stat : {
@@ -131,6 +134,15 @@ class OSimStatsCorpus:
         # delta may not be present
                          
         with open(path) as f:
+            setName = os.path.basename(path)
+            
+            print "Loading set %s" % (setName)
+            
+            if not setName in self._data:
+                self._data[setName] = {}
+                
+            set = self.data[setName]
+                                        
             for line in f:    
                 match = lineRe.match(line)
                 
@@ -146,13 +158,13 @@ class OSimStatsCorpus:
                     
                     value = OSimStatsCorpus.parseValue(rawValue, valueRe)
                     
-                    if not category in self._data:
-                        self._data[category] = collections.OrderedDict()
+                    if not category in set:
+                        set[category] = collections.OrderedDict()
                         
-                    if not container in self._data[category]:
-                        self._data[category][container] = collections.OrderedDict()
+                    if not container in set[category]:
+                        set[category][container] = collections.OrderedDict()
                     
-                    if not name in self._data[category][container]:
+                    if not name in set[category][container]:
                         entry = { 
                             'abs' : { 'values' : [], 'units' : value[1] },
                             'category' : category,
@@ -160,9 +172,9 @@ class OSimStatsCorpus:
                             'fullName' : statFullName,
                             'name' : name
                         }
-                        self._data[category][container][name] = entry
+                        set[category][container][name] = entry
                         
-                    stat = self._data[category][container][name]           
+                    stat = set[category][container][name]           
                                     
                     stat['abs']['values'].append(value[0])
                     
