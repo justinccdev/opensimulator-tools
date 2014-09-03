@@ -1,0 +1,105 @@
+{
+  "graphs": [
+    {
+      "sets" : "keynote-01-OpenSim.logStats",
+      "select" : "*CPU*",
+      "out" : "cpu.png"
+    },
+    {
+      "sets" : "keynote-01-OpenSim.logStats",
+      "select" : "server.processor.Threads",
+      "out" : "threads.png"
+    },
+    {
+      "sets" : "keynote-01-OpenSim.logStats",
+      "select" : "*BuiltinThreadpoolWorkerThreadsAvailable",
+      "out" : "builtin-threadpool-worker-threads-available-count.png"
+    },
+    {
+      "sets" : "keynote-01-OpenSim.logStats",
+      "select" : "*BuiltinThreadpoolIOCPThreadsAvailable",
+      "out" : "builtin-threadpool-iocp-threads-available-count.png"
+    },
+    {
+      "sets" : "keynote-01-OpenSim.logStats",
+      "select" : "*STPInUseThreads",
+      "out" : "stp-in-use-threads.png"
+    },
+    {
+      "sets" : "keynote-01-OpenSim.logStats",
+      "select" : "*STPWorkItemsWaiting",
+      "out" : "stp-work-items-waiting.png"
+    },
+    {
+      "select" : "*RootAgents",
+      "action" : "sum",
+      "out" : "rootagents.png"
+    },
+    {
+      "select" : "*RootAgents",
+      "out" : "rootagents-per-region.png"
+    },
+    {
+      "select" : "*FrameTime",
+      "out" : "frame-time.png"
+    },
+    {
+      "select" : "*AgentTime",
+      "out" : "agent-time.png"
+    },
+    {
+      "select" : "*PhysicsTime",
+      "out" : "physics-time.png"
+    },
+    {
+      "select" : "*OtherTime",
+      "out" : "other-time.png"
+    },
+    {
+      "select" : "*AgentUpdates",      
+      "out" : "agent-update-per-region.png"
+    },
+    {
+      "select" : "*AgentUpdates",      
+      "action" : "sum",
+      "out" : "total-agent-updates.png"
+    },
+    {
+      "select" : "*IncomingUDPReceivesCount",
+      "out" : "incoming-udp-receives.png"
+    },
+    {
+      "select" : "*IncomingPacketsResentCount",
+      "out" : "incoming-resent-count.png"
+    },
+    {
+      "select" : "*InboxPacketsCount",
+      "out" : "inbox-packets-count.png"
+    },
+    {
+      "select" : "*OutgoingUDPSendsCount",
+      "out" : "outgoing-udp-sends-count.png"
+    },
+    {
+      "select" : "*OutgoingUDPSendsCount",
+      "out" : "outgoing-udp-sends-count.png"
+    },
+    {
+      "select" : "*OutgoingPacketsResentCount",
+      "out" : "outgoing-resent-count.png"
+    },
+    {
+      "select" : "*HTTPRequestsServed",
+      "out" : "http-requests-served-count.png"
+    },
+    {
+      "select" : "*HTTPRequestsMade",
+      "out" : "http-requests-made-count.png"
+    },
+    {
+      "select" : "inventory*RequestsMade",
+      "out" : "inventory-http-requests-out-count.png"
+    }
+
+  ]
+}
