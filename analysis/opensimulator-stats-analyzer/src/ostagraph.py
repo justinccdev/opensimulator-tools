@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import argparse
+import json
 import matplotlib.pyplot as plt
 import sys
 from pylab import *
@@ -15,7 +16,34 @@ def plotNoneAction(stats, type):
         
 def plotSumAction(stats, type):
     totalsStat = OSimStatsHelper.sumStats(stats)                
-    plt.plot(totalsStat[type]['values'], label=totalsStat['container'])    
+    plt.plot(totalsStat[type]['values'], label=totalsStat['container'])
+    
+def produceGraph(select, statType, action, show, save, outPath):
+    stats = corpus.getStats(select)
+    
+    if len(stats) <= 0:
+        print "No stats matching %s" % (select)
+        return
+    
+    # Used to fetch data that will be the same for all stats
+    oneStat = stats[stats.keys()[0]]
+    
+    plt.title(select)
+    plt.ylabel(oneStat[statType]['units'])
+    plt.xlabel("samples")
+    
+    if action == 'sum':    
+        plotSumAction(stats.values(), statType)
+    else:
+        plotNoneAction(stats.values(), statType)
+        
+    plt.legend()        
+       
+    if save: 
+        savefig(outPath)
+        
+    if show:
+        plt.show()           
 
 ############
 ### MAIN ###
@@ -23,9 +51,13 @@ def plotSumAction(stats, type):
 parser = argparse.ArgumentParser(formatter_class = argparse.RawTextHelpFormatter)
 
 parser.add_argument(
+    '--batch',
+    help = "Path to a json file containing batch instructions for producing graphs.  If this is set then any options are ignored except for --outpath",
+    default = argparse.SUPPRESS)
+
+parser.add_argument(
     '--select', 
-    help = "Select the full name of a stat to graph (e.g. \"scene.Keynote 1.RootAgents\")",
-    required = True)
+    help = "Select the full name of a stat to graph (e.g. \"scene.Keynote 1.RootAgents\")")
 
 parser.add_argument(
     '--type', 
@@ -43,6 +75,11 @@ parser.add_argument(
     default = argparse.SUPPRESS)
 
 parser.add_argument(
+    '--outdir',
+    help = "Directory to output graphs if the --batch option is used",
+    default = argparse.SUPPRESS)
+
+parser.add_argument(
     'statsLogPath', 
     help = "Path to the stats log file.", 
     metavar = "stats-log-path",
@@ -54,28 +91,37 @@ corpus = OSimStatsCorpus()
 
 for path in opt.statsLogPath:
     corpus.load(path)
-
-stats = corpus.getStats(opt.select)
-
-if len(stats) <= 0:
-    print "No stats matching %s" % (opt.select)
-    sys.exit(1)
-
-# Used to fetch data that will be the same for all stats
-oneStat = stats[stats.keys()[0]]
-
-plt.title(opt.select)
-plt.ylabel(oneStat[opt.type]['units'])
-plt.xlabel("samples")
-
-if opt.action == 'sum':    
-    plotSumAction(stats.values(), opt.type)
-else:
-    plotNoneAction(stats.values(), opt.type)
     
-plt.legend()        
+if "batch" in opt:
+    batchCommands = json.load(open(opt.batch))
     
-if 'out' in opt:
-    savefig(opt.out)
+    for graph in batchCommands["graphs"]:
+        select = graph["select"]
+        
+        if "type" in graph:
+            type = graph["type"]
+        else:
+            type = "abs"
+            
+        if "action" in graph:
+            action = graph["action"]
+        else:
+            action = "none"
+            
+        if "out" in graph:
+            outPath = os.path.join(opt.outdir, graph["out"])
+            save = True
+            show = False
+            
+        produceGraph(select, type, action, show, save, outPath)            
+                    
 else:
-    plt.show()      
+    save = "out" in opt
+    show = not save
+    
+    if save:
+        outPath = opt.out
+    else:
+        outPath = None
+    
+    produceGraph(opt.select, opt.type, opt.action, show, save, outPath)   
