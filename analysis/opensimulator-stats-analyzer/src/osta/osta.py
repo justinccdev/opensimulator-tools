@@ -115,8 +115,8 @@ class OSimStatsCorpus:
         self._data = {}
         self._samplesCount = 0
     
-    def parse(self, path):
-        """Parse OpenSimulator stats log data from the given path and merge into any existing data."""        
+    def load(self, path):
+        """Load OpenSimulator stats log data from the given path and merge into any existing data."""        
         # Structure
         # category : { 
         #    container : { 

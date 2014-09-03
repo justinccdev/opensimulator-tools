@@ -32,7 +32,7 @@ opt = parser.parse_args()
 corpus = OSimStatsCorpus()
 
 for path in opt.statsLogPath:
-    corpus.parse(path)            
+    corpus.load(path)            
             
 stats = corpus.getStats(opt.select)
 
