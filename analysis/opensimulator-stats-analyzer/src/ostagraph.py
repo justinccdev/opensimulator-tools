@@ -18,7 +18,7 @@ def plotSumAction(stats, type):
     totalsStat = OSimStatsHelper.sumStats(stats)                
     plt.plot(totalsStat[type]['values'], label=totalsStat['container'])
     
-def produceGraph(select, statType, action, show, save, outPath):
+def produceGraph(select, statType, action, show, save, outPath):        
     stats = corpus.getStats(select)
     
     if len(stats) <= 0:
@@ -28,6 +28,7 @@ def produceGraph(select, statType, action, show, save, outPath):
     # Used to fetch data that will be the same for all stats
     oneStat = stats[stats.keys()[0]]
     
+    clf()
     plt.title(select)
     plt.ylabel(oneStat[statType]['units'])
     plt.xlabel("samples")
