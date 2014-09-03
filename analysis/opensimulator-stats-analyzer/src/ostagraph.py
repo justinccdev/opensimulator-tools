@@ -18,8 +18,8 @@ def plotSumAction(stats, type):
     totalsStat = OSimStatsHelper.sumStats(stats)                
     plt.plot(totalsStat[type]['values'], label=totalsStat['container'])
     
-def produceGraph(select, statType, action, show, save, outPath):        
-    stats = corpus.getStats(select)
+def produceGraph(sets, select, statType, action, show, save, outPath):        
+    stats = corpus.getStats(sets, select)
     
     if len(stats) <= 0:
         print "No stats matching %s" % (select)
@@ -99,6 +99,11 @@ if "batch" in opt:
     for graph in batchCommands["graphs"]:
         select = graph["select"]
         
+        if "sets" in graph:
+            sets = graph["sets"]
+        else:
+            sets = "*"
+        
         if "type" in graph:
             type = graph["type"]
         else:
@@ -118,7 +123,7 @@ if "batch" in opt:
             save = False
             show = True
             
-        produceGraph(select, type, action, show, save, outPath)            
+        produceGraph(sets, select, type, action, show, save, outPath)            
                     
 else:
     save = "out" in opt
@@ -129,4 +134,4 @@ else:
     else:
         outPath = None
     
-    produceGraph(opt.select, opt.type, opt.action, show, save, outPath)   
+    produceGraph("*", opt.select, opt.type, opt.action, show, save, outPath)   

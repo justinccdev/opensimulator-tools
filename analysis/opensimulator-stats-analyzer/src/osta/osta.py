@@ -80,7 +80,10 @@ class OSimStatsCorpus:
         return float(valueMatch.group(1)), valueMatch.group(2)
         
     def getStat(self, statFullName):
-        """Get a statistic given its full name."""
+        """
+        Get a statistic given its full name.
+        FIXME: Does not allow one to interrogate a given set yet.
+        """
         if self._data == None:
             return None
         
@@ -92,24 +95,28 @@ class OSimStatsCorpus:
             else: 
                 return None
            
-    def getStats(self, glob = "*"):
+    def getStats(self, setGlob = "*", selectGlob = "*"):
         """
         Returns a dictionary of stats where fullName => stat.
         If glob is specified then this is used to match stats using their full name
         If no stats are found then an empty dictionary is returned.
         """         
-        # FIXME: Doing far more work than necessary here if we simply want all stats without matching.
-        if glob == None:
-            glob = "*"
+        
+        if selectGlob == None:
+            selectGlob = "*"
+            
+        if setGlob == None:
+            setGlob = "*"            
             
         matchingStats = collections.OrderedDict()
         
-        for set in self._data.values():
-            for category, containers in set.items():
-                for container, stats in containers.items():
-                    for statName, stat in stats.items():        
-                        if fnmatch.fnmatch(stat['fullName'], glob):
-                            matchingStats[stat['fullName']] = stat
+        for setName, set in self._data.items():
+            if fnmatch.fnmatch(setName, setGlob):
+                for category, containers in set.items():
+                    for container, stats in containers.items():
+                        for statName, stat in stats.items():        
+                            if fnmatch.fnmatch(stat['fullName'], selectGlob):
+                                matchingStats[stat['fullName']] = stat
                         
         return matchingStats
             
