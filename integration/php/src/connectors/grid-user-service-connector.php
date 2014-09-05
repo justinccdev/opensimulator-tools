@@ -26,4 +26,17 @@ function SetHome($serviceUri, $userId, $regionId, $posX, $posY, $posZ, $lookAtX,
     return PostToService($serviceUri, http_build_query($params), $debug);            
 }
 
+function SetLastLocation($serviceUri, $userId, $regionId, $posX, $posY, $posZ, $lookAtX, $lookAtY, $debug = FALSE)
+{
+    $params 
+        = array(
+            'UserID' => $userId,
+            'RegionID' => $regionId,
+            'Position' => "<$posX,$posY,$posZ>",
+            'LookAt' => "<$lookAtX,$lookAtY,0>",
+            'METHOD' => "setposition");   
+            
+    return PostToService($serviceUri, http_build_query($params), $debug);            
+}
+
 ?>
