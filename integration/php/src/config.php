@@ -5,6 +5,7 @@
 $IP = dirname(__FILE__);
 
 $GRID_SERVICE_URI = "http://localhost:8003/grid";
+$GRID_USER_SERVICE_URI = "http://localhost:8003/griduser";
 $USER_ACCOUNTS_SERVICE_URI = "http://localhost:8003/accounts";
 $PRESENCE_SERVICE_URI = "http://localhost:8003/presence";
 $AVATAR_SERVICE_URI = "http://localhost:8003/avatar";
