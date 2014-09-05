@@ -12,12 +12,12 @@ require_once "$IP/connectors/grid-user-service-connector.php";
 $parser = new Console_CommandLine();
 
 $parser->addArgument('userID');
-$parser->addArgument('homeRegionID');
-$parser->addArgument('homePosX');
-$parser->addArgument('homePosY');
-$parser->addArgument('homePosZ');
-$parser->addArgument('homeLookAtX');
-$parser->addArgument('homeLookAtY');
+$parser->addArgument('regionID');
+$parser->addArgument('posX');
+$parser->addArgument('posY');
+$parser->addArgument('posZ');
+$parser->addArgument('lookAtX');
+$parser->addArgument('lookAtY');
         
 try
 {
@@ -36,7 +36,7 @@ if (!IsUuid($userId))
     exit(1);
 }
 
-$homeRegionId = $params->args['homeRegionID'];
+$regionId = $params->args['regionID'];
    
 if (!IsUuid($userId))
 {
@@ -44,12 +44,12 @@ if (!IsUuid($userId))
     exit(2);
 }
 
-$homePosX = $params->args['homePosX'];
-$homePosY = $params->args['homePosY'];
-$homePosZ = $params->args['homePosZ'];
-$lookAtX = $params->args['homeLookAtX'];
-$lookAtY = $params->args['homeLookAtY'];
+$posX = $params->args['posX'];
+$posY = $params->args['posY'];
+$posZ = $params->args['posZ'];
+$lookAtX = $params->args['lookAtX'];
+$lookAtY = $params->args['lookAtY'];
 
-SetHome($GRID_USER_SERVICE_URI, $userId, $homeRegionId, $homePosX, $homePosY, $homePosZ, $lookAtX, $lookAtY, TRUE);
+SetHome($GRID_USER_SERVICE_URI, $userId, $regionId, $posX, $posY, $posZ, $lookAtX, $lookAtY, TRUE);
 
 ?>
