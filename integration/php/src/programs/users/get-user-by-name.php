@@ -28,3 +28,5 @@ $firstName = $params->args['firstName'];
 $lastName = $params->args['lastName'];
 
 GetUserAccountByName($USER_ACCOUNTS_SERVICE_URI, $firstName, $lastName, TRUE);
+
+?>
