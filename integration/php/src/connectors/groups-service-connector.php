@@ -175,7 +175,7 @@ function RemoveUserFromGroup($serviceUri, $groupId, $requestingUserId, $userId, 
 }
 
 /*
- * Add a new group.
+ * Update details of an existing group.
  * 
  * @param string $serviceURI 
  *      Inventory service URI
