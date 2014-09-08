@@ -102,10 +102,10 @@ class OSimCtrl:
         print "OpenSimulator path: %s" % self._binaryPath
 
         if screen != None:
-            print "Status: Active"
+            print "Status: ### Active ###"
             return True
         else:
-            print "Status: Inactive"
+            print "Status: ### Inactive ###"
             return False
 
     def startComponent(self, opts):
