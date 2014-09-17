@@ -10,12 +10,14 @@ import time
 #########################
 ### UTILITY FUNCTIONS ###
 #########################
-def chdir(dir):
+def chdir(dir, verbose = False):
     os.chdir(dir)
-    print "Executing chdir to %s" % dir
+    if verbose:
+    	print "Executing chdir to %s" % dir
 
-def execCmd(cmd):
-    print "Executing command: %s" % sanitizeString(cmd)
+def execCmd(cmd, verbose = False):
+    if verbose:
+    	print "Executing command: %s" % sanitizeString(cmd)
 
     # Use Popen instead of subprocess.check_output as latter only exists in Python 2.7 onwards
     # output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
@@ -64,9 +66,9 @@ class OSimCtrl:
     def execCommand(self, command, opts):
         """Execute a command.  Returns True on success, False otherwise."""
         if command == "attach":
-            self.attachToComponent()
+            self.attachToComponent(opts)
         elif command == "status":
-            self.getComponentStatus()
+            self.getComponentStatus(opts)
         elif command == "start":
             self.startComponent(opts)
         elif command == "stop":
@@ -76,9 +78,9 @@ class OSimCtrl:
         else:
             print "Command %s not recognized" % command
 
-    def attachToComponent(self):
+    def attachToComponent(self, opts):
         """Attach to a screen running the component.  Returns True on success, False otherwise."""
-        screen = self.findScreen()
+        screen = self.findScreen(opts.verbose)
 
         if screen == None:
             print "Did not find screen named %s for attach" % self._screenName
@@ -88,18 +90,19 @@ class OSimCtrl:
             execCmd("%s -x %s" % (self._screenPath, screen))
             return True
 
-    def getComponentStatus(self):
+    def getComponentStatus(self, opts):
         """Get the status of the given component.  Returns True if active, False if inactive or problem finding."""
 
         # We'll check screen even if we found PID so that we can get screen information
-        screen = self.findScreen()
+        screen = self.findScreen(opts.verbose)
 
         if screen == None:
             print "Did not find screen named %s" % self._screenName
         else:
             print "Found screen %s" % screen
 
-        print "OpenSimulator path: %s" % self._binaryPath
+        if opts.verbose:
+            print "OpenSimulator path: %s" % self._binaryPath
 
         if screen != None:
             print "Status: ### Active ###"
@@ -110,22 +113,22 @@ class OSimCtrl:
 
     def startComponent(self, opts):
         """Start the given component.  Returns True on success, False otherwise"""
-        screen = self.findScreen()
+        screen = self.findScreen(opts.verbose)
 
         if screen != None:
             print >> sys.stderr, "Screen session %s already started." % (screen)
             return False
 
-        chdir(self._binaryPath)
+        chdir(self._binaryPath, opts.verbose)
 
         cmd = "%s %s.exe %s" % (self._monoPath, self._componentName, self._switches)
 
         if opts.autorestart:
             cmd = "bash -c 'set carryon=true; trap \"carryon=false\" SIGUSR1; while $carryon; do %s; done'" % (cmd)
 
-        execCmd("%s -S %s -d -m %s" % (self._screenPath, self._screenName, cmd))
+        execCmd("%s -S %s -d -m %s" % (self._screenPath, self._screenName, cmd), opts.verbose)
 
-        screen = self.findScreen()
+        screen = self.findScreen(opts.verbose)
         if screen != None:
             print "%s starting in screen instance %s" % (self._componentName, screen)
         else:
@@ -139,19 +142,21 @@ class OSimCtrl:
 
     def stopComponent(self, opts):
         """Stop the given component.  Returns True on success, False if the component was already stopped or if there was a problem stopping."""
-        screen = self.findScreen()
+        screen = self.findScreen(opts.verbose)
 
         if screen == None:
             print >> sys.stderr, "No screen session named %s to stop" % self._screenName
             return False
 
-        (autoRestartPid, comm) = execCmd("ps --ppid %s -o pid=,comm=" % screen.split(".")[0]).split()
+        print "Stopping screen instance %s" % screen
+
+        (autoRestartPid, comm) = execCmd("ps --ppid %s -o pid=,comm=" % screen.split(".")[0], opts.verbose).split()
 
         # Any uncaught signal sent to mono (including SIGUSR1) will kill it
         if comm == "bash":
             os.kill(int(autoRestartPid), signal.SIGUSR1)
 
-        execCmd("%s -S %s -p 0 -X stuff quit$(printf \r)" % (self._screenPath, screen))
+        execCmd("%s -S %s -p 0 -X stuff quit$(printf \r)" % (self._screenPath, screen), opts.verbose)
 
         timeElapsed = 0
 
@@ -159,7 +164,7 @@ class OSimCtrl:
             time.sleep(self._pollingInterval)
             timeElapsed += self._pollingInterval
 
-            screen = self.findScreen()
+            screen = self.findScreen(opts.verbose)
 
             if screen == None:
                 print "Screen instance %s terminated." % self._screenName
@@ -176,12 +181,12 @@ class OSimCtrl:
         self.stopComponent(opts)
         return self.startComponent(opts)
 
-    def findScreen(self):
+    def findScreen(self, verbose = False):
         """Try to find the screen instance for this component.  Returns the screen pid.name on success, None otherwise."""
         screenList = ""
 
         try:
-            screenList = self.getScreenList()
+            screenList = self.getScreenList(verbose)
         except subprocess.CalledProcessError as cpe:
             screenList = cpe.output
 
@@ -194,9 +199,9 @@ class OSimCtrl:
         else:
             return None
 
-    def getScreenList(self):
+    def getScreenList(self, verbose = False):
         """Get a list of available screens directly from the screen command."""
-        return execCmd("%s -list" % self._screenPath)
+        return execCmd("%s -list" % self._screenPath, verbose)
 
 ###############################
 ### COMMON SCRIPT FUNCTIONS ###
@@ -222,6 +227,12 @@ def main(binaryPath, screenPath, switches, monoPath, componentName, screenName):
       '-a',
       '--attach',
       help = "Start and restart commmands will also attach to the started screen instance.",
+      action = "store_true")
+
+    parser.add_argument(
+      '-v',
+      '--verbose',
+      help = "Be verbose about commands executed",
       action = "store_true")
 
     opts = parser.parse_args()

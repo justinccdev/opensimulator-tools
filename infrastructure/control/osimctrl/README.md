@@ -63,6 +63,11 @@ simply start it again).  Alternatively, you can send the signal SIGUSR1 to the
 bash script which acts as the simple loop.  This will be a child process from
 the screen instance).
 
+-v, --verbose
+
+If set then osimctrl prints out each command that it executes and other information.  
+Useful for debugging
+
 -h. --help
 
 Display usage text
