@@ -2,6 +2,8 @@
 
 import argparse
 import json
+import os
+import os.path
 import matplotlib.pyplot as plt
 import sys
 from pylab import *
@@ -95,6 +97,9 @@ for path in opt.statsLogPath:
     
 if "batch" in opt:
     batchCommands = json.load(open(opt.batch))
+
+    if not os.path.exists(opt.outdir):
+      os.mkdir(opt.outdir)
     
     for graph in batchCommands["graphs"]:
         select = graph["select"]
