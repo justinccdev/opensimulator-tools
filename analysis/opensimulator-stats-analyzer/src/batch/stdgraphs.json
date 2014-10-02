@@ -44,6 +44,26 @@
       "out" : "frame-time.png"
     },
     {
+      "select" : "*FrameTime",
+      "sets" : "keynote-01-OpenSim.logStats",
+      "out" : "frame-time-kn1.png"
+    },
+    {
+      "select" : "*FrameTime",
+      "sets" : "keynote-02-OpenSim.logStats",
+      "out" : "frame-time-kn2.png"
+    },
+    {
+      "select" : "*FrameTime",
+      "sets" : "keynote-03-OpenSim.logStats",
+      "out" : "frame-time-kn3.png"
+    },
+    {
+      "select" : "*FrameTime",
+      "sets" : "keynote-04-OpenSim.logStats",
+      "out" : "frame-time-kn4.png"
+    },
+    {
       "select" : "*AgentTime",
       "out" : "agent-time.png"
     },
@@ -54,6 +74,10 @@
     {
       "select" : "*OtherTime",
       "out" : "other-time.png"
+    },
+    {
+      "select" : "*SimSpareMS",
+      "out" : "spare-time.png"
     },
     {
       "select" : "*AgentUpdates",      
@@ -87,6 +111,10 @@
     {
       "select" : "*OutgoingPacketsResentCount",
       "out" : "outgoing-resent-count.png"
+    },
+    {
+      "select" : "*OQRERequestsWaiting",
+      "out" : "oqre-requests-waiting-count.png"
     },
     {
       "select" : "*HTTPRequestsServed",
