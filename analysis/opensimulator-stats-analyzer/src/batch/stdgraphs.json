@@ -31,6 +31,10 @@
       "out" : "stp-work-items-waiting.png"
     },
     {
+      "select" : "*JobsWaiting",
+      "out" : "jobs-waiting.png"
+    },
+    {
       "select" : "*RootAgents",
       "action" : "sum",
       "out" : "rootagents.png"
@@ -72,6 +76,10 @@
       "out" : "physics-time.png"
     },
     {
+      "select" : "*PhysicsFPS",
+      "out" : "physics-fps.png"
+    },
+    {
       "select" : "*OtherTime",
       "out" : "other-time.png"
     },
@@ -109,8 +117,16 @@
       "out" : "outgoing-udp-sends-count.png"
     },
     {
+      "select" : "*OutgoingPacketsQueuedCount",
+      "out" : "outgoing-packets-queued-count.png"
+    },
+    {
       "select" : "*OutgoingPacketsResentCount",
       "out" : "outgoing-resent-count.png"
+    },
+    {
+      "select" : "*ProcessTime",
+      "out" : "process-time.png"
     },
     {
       "select" : "*OQRERequestsWaiting",

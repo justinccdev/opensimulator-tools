@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextureLoadTest", "TextureLoadTest.csproj", "{EB96369F-48F1-4EA7-81AC-FBF0B5DD920E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EB96369F-48F1-4EA7-81AC-FBF0B5DD920E}.Debug|x86.ActiveCfg = Debug|x86
+		{EB96369F-48F1-4EA7-81AC-FBF0B5DD920E}.Debug|x86.Build.0 = Debug|x86
+		{EB96369F-48F1-4EA7-81AC-FBF0B5DD920E}.Release|x86.ActiveCfg = Release|x86
+		{EB96369F-48F1-4EA7-81AC-FBF0B5DD920E}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = TextureLoadTest.csproj
+	EndGlobalSection
+EndGlobal

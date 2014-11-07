@@ -1,0 +1,6 @@
+BUILDING
+
+To build
+
+cd TextureLoadTest
+xbuild
