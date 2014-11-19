@@ -8,7 +8,9 @@ tsFormat = "%Y-%m-%d %H:%M:%S"
 
 # Need to exclude milliseconds since this will only appear if explicitly configured in OpenSim.exe.config, etc.
 tsRe = re.compile("^([\d-]+ [\d:]+)")
-loginRe = re.compile("\[LLOGIN SERVICE]: All clear. Sending login response to (\w+) (\S+)")
+# FIXME: This is probably not a good RE since people could have spaces in their names in theory.
+gatekeeperRe = re.compile("\[GATEKEEPER SERVICE]: Launching (\S+) (.*), Teleport Flags: ")
+loginRe = re.compile("\[LLOGIN SERVICE]: All clear. Sending login response to (\S+) (\S+)")
 # 2014-01-16 00:28:54,961 INFO  - OpenSim.Services.LLLoginService.LLLoginService [LLOGIN SERVICE]: Login request for Joe Danger at last using viewer Singularity 1.8.2.4929, channel Singularity, IP 192.168.1.2, Mac f6504c2415f0282a3e4bd2cbef1ddf08, Id0 cf7b76bf4f26fd0700c483692312f14b
 diagProcessMemoryRe = re.compile("Process memory.*:")
 
@@ -16,11 +18,11 @@ def getFormattedTs(ts):
     return ts.strftime("%Y-%m-%d %H:%M:%S")
 
 """
-See if can match login information to the given line.
+See if can match login entrance information to the given line.
 If so, return the name.
 If not, return None.
 """
-def matchLogin(logline, ts):
+def matchEntranceViaLogin(logline, ts):
     match = loginRe.search(logline)
   
     if match != None:
@@ -31,6 +33,23 @@ def matchLogin(logline, ts):
         return "%s %s" % (firstName, lastName)
     else:
         return None;
+    
+"""
+See if can match gatekeeper entrance information to the given line.
+If so, return the name.
+If not, return None.
+"""
+def matchEntranceViaGatekeeper(logline, ts):
+    match = gatekeeperRe.search(logline)
+  
+    if match != None:
+        # print "Found match for %s" % (logline)
+        firstName = match.group(1)
+        lastName = match.group(2)
+        #print "%s Login request %s %s" % (getFormattedTs(ts), firstName, lastName)
+        return "%s %s" % (firstName, lastName)
+    else:
+        return None;    
 
 def matchDiag(logline, ts):
     match = diagProcessMemoryRe.search(logline)
@@ -38,7 +57,10 @@ def matchDiag(logline, ts):
     if match != None:
         print "%s %s" % (getFormattedTs(ts), logline),
         
-"""Return timestamp matching a logline.  If there was no match, then None is returned"""
+"""
+Return timestamp matching a logline.  
+If there was no match, then None is returned
+"""
 def matchTs(logline):
     match = tsRe.search(logline)
 
@@ -89,12 +111,21 @@ for filename in filenames:
             if ts != None:
                 lastTs = ts
 
-            loginName = matchLogin(logline, lastTs)
+            """
+            loginName = matchEntranceViaLogin(logline, lastTs)
             if loginName != None:
                 if loginName in loginsByUser:
                     loginsByUser[loginName] += 1
                 else:
                     loginsByUser[loginName] = 1
+            """
+                    
+            loginName = matchEntranceViaGatekeeper(logline, lastTs)
+            if loginName != None:
+                if loginName in loginsByUser:
+                    loginsByUser[loginName] += 1
+                else:
+                    loginsByUser[loginName] = 1                    
                                  
             matchDiag(logline, lastTs)
             
@@ -102,10 +133,13 @@ for filename in filenames:
         pass
 
 print "Summary"
-print "Login information"
+print "Logins seen from:"
 
-for loginName, count in loginsByUser.iteritems():
-    print "%s: %s" % (loginName, count)
+# The problem we have here is that on a Hypergrid setup where the gatekeeper service and the login service are in the
+# same robust container (almost always) we would need some more sophisticated logic to stop double counting of users
+# since local logins get both LLOGIN SERVICE and GATEKEEPER SERVICE lines.  For now, we'll just ignore the problem.
+for loginName in loginsByUser.keys():
+    print "  %s" % (loginName)
     
 print "Total unique user logins recorded: %s" % (len(loginsByUser))
 print "Fin"
