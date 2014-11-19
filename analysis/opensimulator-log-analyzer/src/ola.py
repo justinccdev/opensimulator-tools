@@ -8,7 +8,7 @@ tsFormat = "%Y-%m-%d %H:%M:%S"
 
 # Need to exclude milliseconds since this will only appear if explicitly configured in OpenSim.exe.config, etc.
 tsRe = re.compile("^([\d-]+ [\d:]+)")
-loginRe = re.compile("Login request for (\w+) (\S+)")
+loginRe = re.compile("Login request for (\w+) (\S+) at ")
 # 2014-01-16 00:28:54,961 INFO  - OpenSim.Services.LLLoginService.LLLoginService [LLOGIN SERVICE]: Login request for Joe Danger at last using viewer Singularity 1.8.2.4929, channel Singularity, IP 192.168.1.2, Mac f6504c2415f0282a3e4bd2cbef1ddf08, Id0 cf7b76bf4f26fd0700c483692312f14b
 diagProcessMemoryRe = re.compile("Process memory.*:")
 
