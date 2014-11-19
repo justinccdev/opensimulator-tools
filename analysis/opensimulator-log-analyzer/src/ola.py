@@ -71,6 +71,8 @@ filenames = sys.argv[1:]
 loginsByUser = {}
 
 for filename in filenames:
+    print "Analyzing %s" % (filename)
+    
     loglines = file(filename).readlines();
 
     loglinesIter = iter(loglines)
