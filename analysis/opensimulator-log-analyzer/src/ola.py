@@ -133,11 +133,24 @@ for filename in filenames:
 print "Summary"
 print "Logins seen from:"
 
+directLoginUsers = 0
+hypergridUsers = 0
+
 # The problem we have here is that on a Hypergrid setup where the gatekeeper service and the login service are in the
 # same robust container (almost always) we would need some more sophisticated logic to stop double counting of users
 # since local logins get both LLOGIN SERVICE and GATEKEEPER SERVICE lines.  For now, we'll just ignore the problem.
 for loginName in loginsByUser.keys():
+    
+    # At the moment we assume any last name that starts with @ is a hypergrid user.  A normal user can
+    # also start their last name with @ but this won't be at all common.
+    if loginName.split()[-1].startswith("@"):
+        hypergridUsers += 1
+    else:
+        directLoginUsers += 1
+        
     print "  %s" % (loginName)
     
-print "Total unique user logins recorded: %s" % (len(loginsByUser))
+print "Direct login users: %s" % (directLoginUsers)
+print "Hypergrid users: %s" % (hypergridUsers)
+
 print "Fin"
