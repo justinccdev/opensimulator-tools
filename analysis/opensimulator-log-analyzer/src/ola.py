@@ -13,69 +13,70 @@ loginRe = re.compile("Login request for (\w+) (\S+)")
 diagProcessMemoryRe = re.compile("Process memory.*:")
 
 def getFormattedTs(ts):
-  return ts.strftime("%Y-%m-%d %H:%M:%S")
+    return ts.strftime("%Y-%m-%d %H:%M:%S")
 
 def matchLogin(logline, ts):
-  match = loginRe.search(logline)
+    match = loginRe.search(logline)
   
-  if match != None:
-    # print "Found match for %s" % (logline)
-    firstName = match.group(1)
-    lastName = match.group(2)
-    print "%s Login request %s %s" % (getFormattedTs(ts), firstName, lastName)
+    if match != None:
+        # print "Found match for %s" % (logline)
+        firstName = match.group(1)
+        lastName = match.group(2)
+        print "%s Login request %s %s" % (getFormattedTs(ts), firstName, lastName)
 
 def matchDiag(logline, ts):
-  match = diagProcessMemoryRe.search(logline)
+    match = diagProcessMemoryRe.search(logline)
 
-  if match != None:
-    print "%s %s" % (getFormattedTs(ts), logline),
+    if match != None:
+        print "%s %s" % (getFormattedTs(ts), logline),
         
 """Return timestamp matching a logline.  If there was no match, then None is returned"""
 def matchTs(logline):
-  match = tsRe.search(logline)
+    match = tsRe.search(logline)
 
-  # We'll just discard ValueError parse failures
-  try:
-    if match != None:
-      ts = datetime.datetime.strptime(match.group(1), tsFormat)
+    # We'll just discard ValueError parse failures
+    try:
+        if match != None:
+            ts = datetime.datetime.strptime(match.group(1), tsFormat)
       
-      # If timestamp somehow has a year before 1900, put in 1900 to signal the problem so that we don't fail later on with strftime
-      if ts.year < 1900:
-        ts.year = 1900
+            # If timestamp somehow has a year before 1900, put in 1900 to signal the problem so that we don't fail later on with strftime
+            if ts.year < 1900:
+                ts.year = 1900
 
-      return ts
-  except ValueError:
-    pass
+            return ts
+    except ValueError:
+        pass
 
-  return None
+    return None
 
 # Usage
 if len(sys.argv) == 1:
-  print "Usage: %s <path>+" % sys.argv[0]
-  sys.exit(-1)
+    print "Usage: %s <path>+" % sys.argv[0]
+    sys.exit(-1)
   
 filenames = sys.argv[1:]
 
 for filename in filenames:
-  loglines = file(filename).readlines();
+    loglines = file(filename).readlines();
 
-  loglinesIter = iter(loglines)
+    loglinesIter = iter(loglines)
 
-  # We must have some timestamp here in case we meet a file which manages to match an RE but with no stamp
-  # But must be >= 1900 to stop issues with strftime()
-  lastTs = datetime.datetime(1900, 1, 1)
+    # We must have some timestamp here in case we meet a file which manages to match an RE but with no stamp
+    # But must be >= 1900 to stop issues with strftime()
+    lastTs = datetime.datetime(1900, 1, 1)
 
-  try:
-    while True:
-      logline = loglinesIter.next()
+    try:
+        while True:
+            logline = loglinesIter.next()
       
-      ts = matchTs(logline)
-      if ts != None:
-        lastTs = ts
+            ts = matchTs(logline)
+            if ts != None:
+                lastTs = ts
 
-      matchLogin(logline, lastTs)
-      matchDiag(logline, lastTs)
-  except StopIteration:
-    pass
+            matchLogin(logline, lastTs)
+            matchDiag(logline, lastTs)
+            
+    except StopIteration:
+        pass
 
 print "Fin"
