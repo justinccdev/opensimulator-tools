@@ -15,6 +15,11 @@ diagProcessMemoryRe = re.compile("Process memory.*:")
 def getFormattedTs(ts):
     return ts.strftime("%Y-%m-%d %H:%M:%S")
 
+"""
+See if can match login information to the given line.
+If so, return the name.
+If not, return None.
+"""
 def matchLogin(logline, ts):
     match = loginRe.search(logline)
   
@@ -22,7 +27,10 @@ def matchLogin(logline, ts):
         # print "Found match for %s" % (logline)
         firstName = match.group(1)
         lastName = match.group(2)
-        print "%s Login request %s %s" % (getFormattedTs(ts), firstName, lastName)
+        #print "%s Login request %s %s" % (getFormattedTs(ts), firstName, lastName)
+        return "%s %s" % (firstName, lastName)
+    else:
+        return None;
 
 def matchDiag(logline, ts):
     match = diagProcessMemoryRe.search(logline)
@@ -49,12 +57,18 @@ def matchTs(logline):
 
     return None
 
+############
+### MAIN ###
+############
+
 # Usage
 if len(sys.argv) == 1:
     print "Usage: %s <path>+" % sys.argv[0]
     sys.exit(-1)
   
 filenames = sys.argv[1:]
+
+loginsByUser = {}
 
 for filename in filenames:
     loglines = file(filename).readlines();
@@ -73,10 +87,23 @@ for filename in filenames:
             if ts != None:
                 lastTs = ts
 
-            matchLogin(logline, lastTs)
+            loginName = matchLogin(logline, lastTs)
+            if loginName != None:
+                if loginName in loginsByUser:
+                    loginsByUser[loginName] += 1
+                else:
+                    loginsByUser[loginName] = 1
+                                 
             matchDiag(logline, lastTs)
             
     except StopIteration:
         pass
 
+print "Summary"
+print "Login information"
+
+for loginName, count in loginsByUser.iteritems():
+    print "%s: %s" % (loginName, count)
+    
+print "Total unique user logins recorded: %s" % (len(loginsByUser))
 print "Fin"
