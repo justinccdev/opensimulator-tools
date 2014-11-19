@@ -110,15 +110,13 @@ for filename in filenames:
             ts = matchTs(logline)
             if ts != None:
                 lastTs = ts
-
-            """
+            
             loginName = matchEntranceViaLogin(logline, lastTs)
             if loginName != None:
                 if loginName in loginsByUser:
                     loginsByUser[loginName] += 1
                 else:
                     loginsByUser[loginName] = 1
-            """
                     
             loginName = matchEntranceViaGatekeeper(logline, lastTs)
             if loginName != None:
