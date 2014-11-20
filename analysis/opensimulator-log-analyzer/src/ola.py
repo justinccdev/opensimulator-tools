@@ -150,7 +150,8 @@ for loginName in loginsByUser.keys():
         
     print "  %s" % (loginName)
     
-print "Direct login users: %s" % (directLoginUsers)
-print "Hypergrid users: %s" % (hypergridUsers)
+print "Unique direct login users: %s" % (directLoginUsers)
+print "Unique hypergrid users: %s" % (hypergridUsers)
+print "Total unique users: %s" % (directLoginUsers + hypergridUsers)
 
 print "Fin"
