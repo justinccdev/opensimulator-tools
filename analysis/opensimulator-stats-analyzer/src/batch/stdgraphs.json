@@ -1,32 +1,26 @@
 {
   "graphs": [
     {
-      "sets" : "keynote-01-OpenSim.logStats",
       "select" : "*CPU*",
       "out" : "cpu.png"
     },
     {
-      "sets" : "keynote-01-OpenSim.logStats",
       "select" : "server.processor.Threads",
       "out" : "threads.png"
     },
     {
-      "sets" : "keynote-01-OpenSim.logStats",
       "select" : "*BuiltinThreadpoolWorkerThreadsAvailable",
       "out" : "builtin-threadpool-worker-threads-available-count.png"
     },
     {
-      "sets" : "keynote-01-OpenSim.logStats",
       "select" : "*BuiltinThreadpoolIOCPThreadsAvailable",
       "out" : "builtin-threadpool-iocp-threads-available-count.png"
     },
     {
-      "sets" : "keynote-01-OpenSim.logStats",
       "select" : "*STPInUseThreads",
       "out" : "stp-in-use-threads.png"
     },
     {
-      "sets" : "keynote-01-OpenSim.logStats",
       "select" : "*STPWorkItemsWaiting",
       "out" : "stp-work-items-waiting.png"
     },
@@ -46,26 +40,6 @@
     {
       "select" : "*FrameTime",
       "out" : "frame-time.png"
-    },
-    {
-      "select" : "*FrameTime",
-      "sets" : "keynote-01-OpenSim.logStats",
-      "out" : "frame-time-kn1.png"
-    },
-    {
-      "select" : "*FrameTime",
-      "sets" : "keynote-02-OpenSim.logStats",
-      "out" : "frame-time-kn2.png"
-    },
-    {
-      "select" : "*FrameTime",
-      "sets" : "keynote-03-OpenSim.logStats",
-      "out" : "frame-time-kn3.png"
-    },
-    {
-      "select" : "*FrameTime",
-      "sets" : "keynote-04-OpenSim.logStats",
-      "out" : "frame-time-kn4.png"
     },
     {
       "select" : "*AgentTime",
