@@ -1,0 +1,21 @@
+[Unit]
+ Description=ROBUST and OpenSim Bootstrapper
+
+[Service]
+ User=opensim
+ Type=oneshot
+ WorkingDirectory=/srv/opensim-0.8.2.1/bin
+# ExecStart=/usr/local/bin/opensim-start
+# ExecStop=/usr/local/bin/opensim-stop
+ ExecStart=/usr/bin/screen -dmS ROBUST -- /usr/bin/mono /srv/opensim-0.8.2.1/bin/Robust.exe
+ ExecStart=/bin/sleep 15
+ ExecStart=/usr/bin/screen -dmS OpenSim -- /usr/bin/mono /srv/opensim-0.8.2.1/bin/OpenSim.exe
+ ExecStop=/usr/bin/screen -S OpenSim -p 0 -X magic "quit$(printf \\r)"
+ ExecStop=/usr/bin/screen -S ROBUST -p 0 -X moremagic "quit$(printf \\r)"
+ ExecStop=/bin/sleep 8
+ StandardOutput=syslog+console
+ StandardError=syslog+console
+ RemainAfterExit=1
+
+[Install]
+ WantedBy=multi-user.target
